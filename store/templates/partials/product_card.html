@@ -1,0 +1,19 @@
+{% load store_extras %}
+{# Expects `p` (a product dict from store/data.py). #}
+<article class="pcard" style="{{ p.c|css_vars }}">
+  <div class="pcard-img">
+    {% if p.badge %}<span class="badge pcard-badge{% if p.badge == 'Sale' %} pcard-badge--sale{% endif %}">{{ p.badge }}</span>{% endif %}
+    <button class="wish" type="button" data-wish="{{ p.id }}" aria-pressed="false" aria-label="Save {{ p.name }} to wishlist">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#u-heart"/></svg>
+    </button>
+    <svg viewBox="0 0 120 120" aria-hidden="true"><use href="#{{ p.icon }}"/></svg>
+  </div>
+  <div class="pt-3">
+    <p class="small text-body-secondary mb-0">{{ p.by }}</p>
+    <h3 class="pcard-name">{{ p.name }}</h3>
+    <p class="pcard-price mb-0">{{ p.price|inr }}{% if p.old_price %}<s>{{ p.old_price|inr }}</s>{% endif %}</p>
+    <button class="btn btn-ink w-100 mt-3" type="button" data-add
+            data-id="{{ p.id }}" data-name="{{ p.name }}" data-by="{{ p.by }}"
+            data-price="{{ p.price }}" data-icon="{{ p.icon }}" data-colors="{{ p.c|join:',' }}">Add to cart</button>
+  </div>
+</article>

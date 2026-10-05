@@ -1,0 +1,194 @@
+{% load static store_extras %}<!doctype html>
+<html lang="en" data-bs-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ store_name }} Art Store: art materials, handmade pieces and custom framing{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Artist-grade paints and brushes, handmade pieces from local makers, and custom framing. Free shipping across India on orders over {{ free_shipping_threshold|inr }}.{% endblock %}">
+
+  {# Follow the visitor's system light/dark setting using Bootstrap color modes. Runs before paint to avoid a flash. #}
+  <script>
+    (() => {
+      const mq = matchMedia('(prefers-color-scheme: dark)');
+      const apply = () => document.documentElement.setAttribute('data-bs-theme', mq.matches ? 'dark' : 'light');
+      apply();
+      mq.addEventListener('change', apply);
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Instrument+Sans:wght@400..700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'css/site.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  {% include "partials/sprite.html" %}
+  <a class="visually-hidden-focusable btn btn-primary position-absolute m-2" style="z-index:2000" href="#main">Skip to content</a>
+
+  {# Announcement bar #}
+  <div class="announce">
+    <div class="container d-flex justify-content-between align-items-center gap-3 py-2">
+      <p class="mb-0">Free shipping on orders over {{ free_shipping_threshold|inr }} across India</p>
+      <nav class="d-none d-md-flex gap-4" aria-label="Utility">
+        <a href="#">Track order</a>
+        <a href="#">Contact</a>
+        <a href="#">₹ INR</a>
+      </nav>
+    </div>
+  </div>
+
+  <header class="site-header sticky-top bg-body border-bottom">
+    <div class="container topbar">
+      <button class="icon-btn d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav"
+              aria-controls="mobileNav" aria-label="Open menu">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#u-menu"/></svg>
+      </button>
+
+      <a class="brand" href="{% url 'store:home' %}" aria-label="{{ store_name }} Art Store, home">
+        <svg viewBox="0 0 34 26" aria-hidden="true"><circle cx="9" cy="13" r="9" fill="#2A3BD0"/><circle cx="17" cy="13" r="9" fill="#E8B02E" opacity=".92"/><circle cx="25" cy="13" r="9" fill="#0F7B63" opacity=".88"/></svg>
+        {{ store_name }}
+      </a>
+
+      <form class="search" role="search" action="{% url 'store:home' %}" method="get">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#u-search"/></svg>
+        <label class="visually-hidden" for="q">Search the store</label>
+        <input id="q" name="q" type="search" class="form-control" placeholder="Search paints, brushes, sketchbooks" autocomplete="off">
+      </form>
+
+      <div class="ms-auto d-flex gap-1">
+        <a class="icon-btn" href="#" aria-label="Account"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#u-user"/></svg></a>
+        <a class="icon-btn" href="#" aria-label="Wishlist"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#u-heart"/></svg><span class="count" id="wishCount" hidden>0</span></a>
+        <button class="icon-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartDrawer" aria-controls="cartDrawer" aria-label="Open cart">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#u-bag"/></svg><span class="count" id="cartCount" hidden>0</span>
+        </button>
+      </div>
+    </div>
+
+    <nav class="d-none d-lg-block" aria-label="Shop categories">
+      <div class="container">
+        <ul class="nav cats">
+          {% for cat in categories %}
+          <li class="nav-item">
+            <a class="nav-link" href="#{{ cat.anchor }}">{{ cat.name }}</a>
+            <div class="mega">
+              <div class="container">
+                <div class="row g-4">
+                  {% for child in cat.children %}
+                  <div class="{% if cat.children|length == 1 %}col-lg-4{% else %}col{% endif %}">
+                    <a class="mlink" href="#{{ cat.anchor }}"><b>{{ child.name }}</b><span>{{ child.menu_blurb|default:child.blurb }}</span></a>
+                  </div>
+                  {% endfor %}
+                  {% if cat.promo %}
+                  <div class="{% if cat.children|length == 1 %}col-lg-8{% else %}col-lg-3{% endif %}">
+                    <a class="promo" href="{{ cat.promo.href }}" style="--pbg:{{ cat.promo.bg }}">
+                      <svg viewBox="0 0 120 120" aria-hidden="true" style="{{ cat.promo.c|css_vars }}"><use href="#{{ cat.promo.icon }}"/></svg>
+                      <b>{{ cat.promo.title }}</b><span>{{ cat.promo.link }}</span>
+                    </a>
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </li>
+          {% endfor %}
+          <li class="nav-item ms-auto"><a class="nav-link" href="#shop">New arrivals</a></li>
+          <li class="nav-item"><a class="nav-link" href="#learn">Learn</a></li>
+          <li class="nav-item"><a class="nav-link text-sale" href="#shop">Sale</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  {# Mobile menu: Bootstrap offcanvas + accordion #}
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileNav" aria-labelledby="mobileNavLabel">
+    <div class="offcanvas-header">
+      <span class="brand" id="mobileNavLabel">{{ store_name }}</span>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close menu"></button>
+    </div>
+    <div class="offcanvas-body pt-0">
+      <div class="accordion accordion-flush" id="mobileAccordion">
+        {% for cat in categories %}
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button{% if not forloop.first %} collapsed{% endif %}" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#m-{{ cat.slug }}" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}" aria-controls="m-{{ cat.slug }}">{{ cat.name }}</button>
+          </h2>
+          <div id="m-{{ cat.slug }}" class="accordion-collapse collapse{% if forloop.first %} show{% endif %}" data-bs-parent="#mobileAccordion">
+            <div class="accordion-body pt-0">
+              {% for child in cat.children %}<a class="d-block py-2" href="#{{ cat.anchor }}" data-bs-dismiss="offcanvas">{{ child.name }}</a>{% endfor %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <a class="mobile-link" href="#shop" data-bs-dismiss="offcanvas">New arrivals</a>
+      <a class="mobile-link" href="#learn" data-bs-dismiss="offcanvas">Learn</a>
+      <a class="mobile-link text-sale" href="#shop" data-bs-dismiss="offcanvas">Sale</a>
+    </div>
+  </div>
+
+  <main id="main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="foot">
+    <div class="container">
+      <div class="row g-5">
+        <div class="col-lg-4">
+          <span class="brand text-white">{{ store_name }}</span>
+          <p class="foot-muted mt-3 mb-4">Art materials, handmade pieces and custom framing, shipped across India.</p>
+          <a class="btn btn-light rounded-pill px-4" href="#">Chat on WhatsApp</a>
+        </div>
+        {% for cat in categories %}
+        <div class="col-6 col-lg-2">
+          <h3 class="h6 mb-3">{{ cat.name }}</h3>
+          <ul class="list-unstyled mb-0">
+            {% for child in cat.children %}<li class="mb-2"><a href="#{{ cat.anchor }}">{{ child.name }}</a></li>{% endfor %}
+          </ul>
+        </div>
+        {% endfor %}
+        <div class="col-6 col-lg-2">
+          <h3 class="h6 mb-3">Help</h3>
+          <ul class="list-unstyled mb-0">
+            {% for link in help_links %}<li class="mb-2"><a href="#">{{ link }}</a></li>{% endfor %}
+          </ul>
+        </div>
+      </div>
+      <div class="foot-legal d-flex flex-wrap justify-content-between gap-2">
+        <span>© {% now "Y" %} {{ store_name }} Art Store. All rights reserved.</span>
+        <span>Design mockup with placeholder products and prices.</span>
+      </div>
+    </div>
+  </footer>
+
+  {# Cart drawer: Bootstrap offcanvas, filled by static/js/site.js #}
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="cartDrawer" aria-labelledby="cartDrawerLabel">
+    <div class="offcanvas-header border-bottom px-4">
+      <h2 class="offcanvas-title" id="cartDrawerLabel">Your cart</h2>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close cart"></button>
+    </div>
+    <div class="bg-body-tertiary px-4 py-3 small">
+      <span id="shipText"></span>
+      <div class="progress mt-2" role="progressbar" aria-label="Progress toward free shipping" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="shipProgress">
+        <div class="progress-bar" id="shipBar" style="width:0"></div>
+      </div>
+    </div>
+    <div class="offcanvas-body px-4 py-0" id="cartLines"></div>
+    <div class="border-top p-4" id="cartFoot" hidden>
+      <div class="d-flex justify-content-between fw-bold fs-5 mb-1"><span>Subtotal</span><span id="subTotal">₹0</span></div>
+      <p class="small text-body-secondary mb-3">Taxes and shipping are calculated at checkout.</p>
+      <button class="btn btn-primary btn-lg rounded-pill w-100" type="button">Checkout</button>
+    </div>
+  </div>
+
+  {{ free_shipping_threshold|json_script:"free-shipping" }}
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+  <script src="{% static 'js/site.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

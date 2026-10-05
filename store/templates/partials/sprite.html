@@ -1,0 +1,93 @@
+{# Shared SVG sprite. Illustrations read --c1, --c2, --c3 from the element that <use>s them (see css_vars filter). #}
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="u-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></symbol>
+    <symbol id="u-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></symbol>
+    <symbol id="u-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9z"/></symbol>
+    <symbol id="u-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></symbol>
+    <symbol id="u-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+
+    <symbol id="a-tube" viewBox="0 0 120 120">
+      <g transform="rotate(-28 60 62)">
+        <rect x="50" y="7" width="20" height="10" rx="2" class="f2"/>
+        <rect x="45" y="16" width="30" height="14" rx="3" class="f2"/>
+        <path d="M43 30h34l3 70H40z" fill="#F7F7FB" stroke="#000" stroke-opacity=".12"/>
+        <path d="M42.3 54h35.4l1.3 28H41z" class="f1"/>
+        <path d="M40 100h40l-1.2 7H41.2z" class="f2"/>
+        <path d="M43 103h34M43 105.5h34" stroke="#000" stroke-opacity=".18" stroke-width=".8"/>
+      </g>
+    </symbol>
+    <symbol id="a-brush" viewBox="0 0 120 120">
+      <g transform="rotate(-42 60 60)">
+        <path d="M5 60q2-5 8-5h53v10H13q-6 0-8-5z" class="f1"/>
+        <rect x="64" y="54" width="22" height="12" fill="#C6CBD8"/>
+        <path d="M64 58h22M64 62h22" stroke="#000" stroke-opacity=".15"/>
+        <path d="M86 54q20 1 31 6-11 5-31 6z" class="f2"/>
+      </g>
+    </symbol>
+    <symbol id="a-pad" viewBox="0 0 120 120">
+      <rect x="30" y="20" width="70" height="86" rx="3" fill="#E3E7F1" transform="rotate(5 65 63)"/>
+      <rect x="20" y="14" width="70" height="88" rx="3" fill="#fff" stroke="#000" stroke-opacity=".12"/>
+      <rect x="20" y="14" width="70" height="13" rx="3" class="f1"/>
+      <circle cx="33" cy="20.5" r="2.2" fill="#fff"/><circle cx="55" cy="20.5" r="2.2" fill="#fff"/><circle cx="77" cy="20.5" r="2.2" fill="#fff"/>
+      <path d="M30 48c10-9 22-7 32 0s18 6 24-2v26c-8 7-19 5-29 0s-18-4-27 2z" class="f3" opacity=".6"/>
+    </symbol>
+    <symbol id="a-pencil" viewBox="0 0 120 120">
+      <g transform="rotate(30 60 60)">
+        <g><rect x="32" y="14" width="14" height="72" class="f1"/><rect x="32" y="14" width="14" height="9" fill="#000" opacity=".2"/><path d="M32 86h14l-7 18z" fill="#F1D3A9"/><path d="M36 97h6l-3 7z" fill="#2A2F40"/></g>
+        <g><rect x="53" y="14" width="14" height="72" class="f2"/><rect x="53" y="14" width="14" height="9" fill="#000" opacity=".2"/><path d="M53 86h14l-7 18z" fill="#F1D3A9"/><path d="M57 97h6l-3 7z" fill="#2A2F40"/></g>
+        <g><rect x="74" y="14" width="14" height="72" class="f3"/><rect x="74" y="14" width="14" height="9" fill="#000" opacity=".2"/><path d="M74 86h14l-7 18z" fill="#F1D3A9"/><path d="M78 97h6l-3 7z" fill="#2A2F40"/></g>
+      </g>
+    </symbol>
+    <symbol id="a-painting" viewBox="0 0 120 120">
+      <rect x="12" y="18" width="96" height="84" rx="2" class="f2"/>
+      <rect x="21" y="27" width="78" height="66" fill="#FBF1D6"/>
+      <circle cx="78" cy="46" r="11" class="f3"/>
+      <path d="M21 82c12-17 27-23 41-12 12 8 24 4 37-8v31H21z" class="f1"/>
+      <path d="M21 93v-8c14-8 30-6 44 2 12 6 23 4 34-2v8z" fill="#000" opacity=".2"/>
+    </symbol>
+    <symbol id="a-book" viewBox="0 0 120 120">
+      <rect x="30" y="12" width="62" height="96" rx="4" class="f1"/>
+      <rect x="30" y="12" width="9" height="96" rx="3" fill="#000" opacity=".22"/>
+      <rect x="50" y="30" width="32" height="24" rx="2" fill="#fff" opacity=".93"/>
+      <path d="M55 38h22M55 45h14" stroke="#1B1F2E" stroke-opacity=".55" stroke-width="2" stroke-linecap="round"/>
+      <rect x="73" y="12" width="5" height="96" class="f2"/>
+    </symbol>
+    <symbol id="a-dream" viewBox="0 0 120 120">
+      <circle cx="60" cy="44" r="30" fill="none" class="s1" stroke-width="5"/>
+      <g fill="none" class="s2" stroke-width="1.6" stroke-linecap="round">
+        <circle cx="60" cy="44" r="21"/><circle cx="60" cy="44" r="12"/><circle cx="60" cy="44" r="4"/>
+        <path d="M60 14v60M30 44h60M39 23l42 42M81 23L39 65"/>
+      </g>
+      <path d="M44 72v18M60 74v26M76 72v18" fill="none" stroke="#6B5B4B" stroke-width="1.6"/>
+      <circle cx="44" cy="80" r="2.6" class="f3"/><circle cx="60" cy="84" r="2.6" class="f3"/><circle cx="76" cy="80" r="2.6" class="f3"/>
+      <path d="M44 90c-6 6-6 15 0 20 6-5 6-14 0-20z" class="f2"/>
+      <path d="M60 100c-6 6-6 16 0 20 6-4 6-14 0-20z" class="f3"/>
+      <path d="M76 90c-6 6-6 15 0 20 6-5 6-14 0-20z" class="f2"/>
+    </symbol>
+    <symbol id="a-pouch" viewBox="0 0 120 120">
+      <path d="M18 44h84l-5 50a9 9 0 0 1-9 8H32a9 9 0 0 1-9-8z" class="f1"/>
+      <rect x="16" y="35" width="88" height="13" rx="4" class="f2"/>
+      <path d="M26 41.5h68" stroke="#fff" stroke-opacity=".75" stroke-width="1.6" stroke-dasharray="2 3"/>
+      <circle cx="92" cy="41.5" r="4.5" fill="#fff"/>
+      <g class="f3" opacity=".95"><circle cx="40" cy="66" r="5"/><circle cx="62" cy="78" r="5"/><circle cx="84" cy="66" r="5"/><circle cx="46" cy="90" r="3.5"/><circle cx="78" cy="91" r="3.5"/></g>
+      <path d="M92 46l8 12" stroke="#fff" stroke-width="1.6"/><rect x="96" y="58" width="7" height="15" rx="2" class="f2"/>
+    </symbol>
+    <symbol id="a-scrap" viewBox="0 0 120 120">
+      <rect x="20" y="12" width="78" height="94" rx="4" class="f1"/>
+      <rect x="20" y="12" width="10" height="94" rx="3" fill="#000" opacity=".22"/>
+      <g transform="rotate(-6 60 42)"><rect x="40" y="26" width="40" height="32" fill="#fff"/><rect x="44" y="30" width="32" height="21" class="f2"/></g>
+      <g transform="rotate(5 68 76)"><rect x="52" y="60" width="36" height="32" fill="#fff"/><rect x="56" y="64" width="28" height="19" class="f3"/></g>
+      <rect x="48" y="21" width="24" height="9" class="f3" opacity=".8" transform="rotate(-6 60 25)"/>
+      <path d="M86 106V90l5 4 5-4v16" class="f2"/>
+    </symbol>
+    <symbol id="a-frame" viewBox="0 0 120 120">
+      <rect x="14" y="12" width="92" height="96" rx="2" class="f1" stroke="#000" stroke-opacity=".15"/>
+      <rect x="23" y="21" width="74" height="78" fill="#fff" opacity=".96"/>
+      <rect x="33" y="31" width="54" height="58" class="f2"/>
+      <circle cx="71" cy="47" r="7" fill="#fff" opacity=".9"/>
+      <path d="M33 89V72l16-12 14 10 10-8 14 11v16z" class="f3"/>
+    </symbol>
+    <filter id="drop" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="10" stdDeviation="9" flood-color="#000" flood-opacity=".28"/></filter>
+  </defs>
+</svg>
