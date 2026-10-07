@@ -1,7 +1,7 @@
-Django
-django-crispy-forms
-crispy-bootstrap5
-razorpay
-firebase-admin
-python-decouple
-pillow
+Django==6.1.1
+# django-crispy-forms==2.7
+# crispy-bootstrap5==2026.9
+razorpay==2.0.1
+firebase_admin==7.7.0
+python-decouple==3.8
+pillow==12.3.0
