@@ -34,7 +34,7 @@
     const body = new FormData();
     body.set('razorpay_order_id', rpOrderId);
     body.set('reason', reason);
-    return post(form.dataset.failedUrl || '/checkout/failed/', body).catch(() => {});
+    return post(form.dataset.failedUrl, body).catch(() => {});
   }
 
   form.addEventListener('submit', async (e) => {
@@ -72,12 +72,12 @@
         body.set('razorpay_payment_id', resp.razorpay_payment_id);
         body.set('razorpay_signature', resp.razorpay_signature);
         try {
-          const v = await post('/checkout/verify/', body);
+          const v = await post(form.dataset.verifyUrl, body);
           if (v.data.ok) { location.href = v.data.redirect; return; }
           busy(false); showAlert(v.data.message || 'Payment could not be verified.');
         } catch (err) {
           // Payment went through; the webhook will confirm it. Send them to the order page.
-          location.href = `/order/${data.order_number}/`;
+          location.href = form.dataset.orderUrl.replace('ORDER_NUMBER', data.order_number);
         }
       },
       modal: {

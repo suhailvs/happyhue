@@ -1,5 +1,5 @@
 from pathlib import Path
-
+from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -111,3 +111,7 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+RAZORPAY_KEY_ID = config("RAZORPAY_KEY_ID") #os.environ[""]
+RAZORPAY_KEY_SECRET = config("RAZORPAY_KEY_SECRET") #os.environ[""]
+RAZORPAY_WEBHOOK_SECRET = config("RAZORPAY_WEBHOOK_SECRET") #os.environ[""]
+SHIPPING_FEE = 99 

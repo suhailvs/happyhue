@@ -1,8 +1,13 @@
 // Server-backed cart. Fills the #cartDrawer markup in base.html and handles every [data-add] button.
 // Load this INSTEAD of the cart code in site.js (keep the wishlist and other parts of site.js).
 (() => {
-  const URLS = { cart: '/cart/', add: '/cart/add/', update: '/cart/update/', remove: '/cart/remove/' };
   const $ = (id) => document.getElementById(id);
+  const drawer = $('cartDrawer');
+  if (!drawer) return;
+  const URLS = {
+    cart: drawer.dataset.urlCart, add: drawer.dataset.urlAdd,
+    update: drawer.dataset.urlUpdate, remove: drawer.dataset.urlRemove,
+  };
   const inr = (v) => '₹' + Number(v).toLocaleString('en-IN', { maximumFractionDigits: 0 });
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const csrf = () => (document.cookie.match(/(?:^|; )csrftoken=([^;]+)/) || [])[1] || '';
@@ -52,8 +57,6 @@
     }
     $('cartFoot').hidden = !cart.count;
     $('subTotal').textContent = inr(cart.subtotal);
-    const btn = $('cartFoot').querySelector('button');
-    if (btn) btn.onclick = () => { location.href = '/checkout/'; };
   }
 
   document.addEventListener('click', async (e) => {

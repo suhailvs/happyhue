@@ -9,7 +9,9 @@
     <h1 class="h2 mb-4">Checkout</h1>
     <div class="row g-4 g-lg-5">
       <div class="col-lg-7">
-        <form id="checkoutForm" method="post" action="{% url 'store:checkout_create' %}" novalidate>
+        <form id="checkoutForm" method="post" action="{% url 'store:checkout_create' %}" novalidate
+              data-verify-url="{% url 'store:checkout_verify' %}" data-failed-url="{% url 'store:checkout_failed' %}"
+              data-order-url="{% url 'store:order_success' 'ORDER_NUMBER' %}">
           {% csrf_token %}
           <div id="formAlert" class="alert alert-danger" role="alert" hidden></div>
           <h2 class="h5 mb-3">Delivery details</h2>

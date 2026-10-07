@@ -89,4 +89,5 @@
   $('#cfg').addEventListener('change', draw);
   $('#frameAdd').addEventListener('click', () => window.Varnam.addToCart(current));
   draw();
+  window.HHCart.addFraming({size, frame, mat, width, glazing})
 })();
