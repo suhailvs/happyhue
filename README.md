@@ -16,3 +16,13 @@ python manage.py seed_catalog
    number with a fixed code and send no real SMS.
 7. Real SMS volume is limited on the free tier and may need a billing plan. Check Firebase's current pricing and
    India SMS rules before launch.
+
+## razorpay
+
+test card
+```
+Mastercard (domestic): 5267 3181 8797 5449
+OTP: 123456
+ccv: any 3 digit
+expiry: any future date
+```
