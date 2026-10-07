@@ -1,50 +1,50 @@
-/* Varnam storefront: a thin theme over Bootstrap 5.3.8.
+/* Happy Hue storefront: a thin theme over Bootstrap 5.3.8.
    Colors and fonts are set through Bootstrap's own CSS variables so the
    built-in light and dark modes (data-bs-theme) keep working. */
 
 :root {
-  --vn-ultra: #2A3BD0;
-  --vn-gold: #E8B02E;
-  --vn-viridian: #0F7B63;
-  --vn-rose: #C8445F;
+  --vn-ultra: #12232E;
+  --vn-gold: #FFF4CC;
+  --vn-viridian: #2C3E4C;
+  --vn-rose: #B93A22;
   --vn-display: "Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif;
   --bs-body-font-family: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --bs-body-font-size: 1rem;
   --bs-body-line-height: 1.55;
   /* illustration defaults; overridden per element with the css_vars filter */
-  --c1: #2A3BD0;
-  --c2: #E8B02E;
-  --c3: #C8445F;
+  --c1: #2C3E4C;
+  --c2: #B93A22;
+  --c3: #12232E;
 }
 
 [data-bs-theme="light"] {
-  --bs-body-bg: #FFFFFF;
-  --bs-body-bg-rgb: 255, 255, 255;
-  --bs-body-color: #131A33;
-  --bs-body-color-rgb: 19, 26, 51;
-  --bs-secondary-color: #566079;
-  --bs-tertiary-bg: #F2F4F9;
-  --bs-tertiary-bg-rgb: 242, 244, 249;
-  --bs-border-color: #DEE3EE;
-  --bs-primary: #2A3BD0;
-  --bs-primary-rgb: 42, 59, 208;
-  --vn-accent: #2A3BD0;
-  --vn-sale: #C8445F;
+  --bs-body-bg: #FFFDF5;
+  --bs-body-bg-rgb: 255, 253, 245;
+  --bs-body-color: #12232E;
+  --bs-body-color-rgb: 18, 35, 46;
+  --bs-secondary-color: #4F5F6B;
+  --bs-tertiary-bg: #EAE6D8;
+  --bs-tertiary-bg-rgb: 234, 230, 216;
+  --bs-border-color: #D6D1BF;
+  --bs-primary: #B93A22;
+  --bs-primary-rgb: 185, 58, 34;
+  --vn-accent: #B93A22;
+  --vn-sale: #B93A22;
 }
 
 [data-bs-theme="dark"] {
-  --bs-body-bg: #0E1222;
-  --bs-body-bg-rgb: 14, 18, 34;
-  --bs-body-color: #EDF0FA;
-  --bs-body-color-rgb: 237, 240, 250;
-  --bs-secondary-color: #A0A9C5;
-  --bs-tertiary-bg: #151B31;
-  --bs-tertiary-bg-rgb: 21, 27, 49;
-  --bs-border-color: #262E4A;
-  --bs-primary: #4C5DF0;
-  --bs-primary-rgb: 76, 93, 240;
-  --vn-accent: #4C5DF0;
-  --vn-sale: #E8607B;
+  --bs-body-bg: #12232E;
+  --bs-body-bg-rgb: 18, 35, 46;
+  --bs-body-color: #EAE6D8;
+  --bs-body-color-rgb: 234, 230, 216;
+  --bs-secondary-color: #A9B3B8;
+  --bs-tertiary-bg: #1B2F3D;
+  --bs-tertiary-bg-rgb: 27, 47, 61;
+  --bs-border-color: #34495A;
+  --bs-primary: #E0573D;
+  --bs-primary-rgb: 224, 87, 61;
+  --vn-accent: #E0573D;
+  --vn-sale: #F08A74;
 }
 
 html { scroll-behavior: smooth; scroll-padding-top: 8.5rem; }
@@ -108,7 +108,7 @@ svg { display: block; }
 .ico { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
 
 /* Announcement bar */
-.announce { background: var(--vn-ultra); color: #fff; font-size: .84rem; }
+.announce { background: var(--vn-ultra); color: #FFF4CC; font-size: .84rem; }
 .announce a:hover { text-decoration: underline; }
 
 /* Header */
@@ -116,6 +116,7 @@ svg { display: block; }
 .topbar { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .75rem; padding-block: .6rem; }
 .brand { display: inline-flex; align-items: center; gap: .6rem; font: 800 1.75rem/1 var(--vn-display); letter-spacing: -.035em; }
 .brand svg { width: 34px; height: 26px; }
+.brand img { height: 40px; width: auto; }
 .search { position: relative; flex: 1 1 100%; order: 5; }
 .search .form-control { height: 46px; padding-left: 3.1rem; border-radius: 999px; border: 1.5px solid var(--bs-border-color); background-color: var(--bs-tertiary-bg); }
 .search .form-control:focus { background-color: var(--bs-body-bg); border-color: var(--vn-accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--vn-accent) 22%, transparent); }
@@ -228,9 +229,9 @@ svg { display: block; }
 }
 
 /* Product tabs and cards */
-#productTabs { --bs-nav-pills-link-active-bg: var(--bs-body-color); --bs-nav-pills-link-active-color: var(--bs-body-bg); --bs-nav-link-color: var(--bs-body-color); --bs-nav-link-hover-color: var(--bs-body-color); gap: .5rem; }
-#productTabs .nav-link { padding: .6rem 1.25rem; border: 1.5px solid var(--bs-border-color); border-radius: 999px; font-weight: 600; }
-#productTabs .nav-link.active { border-color: var(--bs-body-color); }
+#productTabs, .cat-pills { --bs-nav-pills-link-active-bg: var(--bs-body-color); --bs-nav-pills-link-active-color: var(--bs-body-bg); --bs-nav-link-color: var(--bs-body-color); --bs-nav-link-hover-color: var(--bs-body-color); gap: .5rem; }
+#productTabs .nav-link, .cat-pills .nav-link { padding: .6rem 1.25rem; border: 1.5px solid var(--bs-border-color); border-radius: 999px; font-weight: 600; }
+#productTabs .nav-link.active, .cat-pills .nav-link.active { border-color: var(--bs-body-color); }
 .pcard-img { position: relative; display: grid; place-items: center; aspect-ratio: 1; background: color-mix(in srgb, var(--c1) 13%, var(--bs-body-bg)); border-bottom: 6px solid var(--c1); border-radius: 4px 4px 0 0; }
 .pcard-img > svg { width: 72%; height: 72%; }
 .pcard-badge { position: absolute; top: 12px; left: 12px; padding: .4rem .55rem; border-radius: 3px; background: var(--bs-body-color); color: var(--bs-body-bg); font-size: .75rem; font-weight: 700; }
@@ -271,13 +272,13 @@ svg { display: block; }
 .post p { color: var(--bs-secondary-color); font-size: .9rem; }
 
 /* Footer (always dark) */
-.foot { padding-block: 4rem 2.25rem; background: #0E1222; color: #EDF0FA; }
-.foot a { color: #A9B2CF; }
+.foot { padding-block: 4rem 2.25rem; background: #12232E; color: #EAE6D8; }
+.foot a { color: #C9CCC2; }
 .foot a:hover { color: #fff; }
 .foot .brand { color: #fff; }
-.foot-muted { max-width: 36ch; color: #A9B2CF; }
+.foot-muted { max-width: 36ch; color: #C9CCC2; }
 .foot li { font-size: .94rem; }
-.foot-legal { margin-top: 3rem; padding-top: 1.4rem; border-top: 1px solid #262E4A; color: #8791B0; font-size: .88rem; }
+.foot-legal { margin-top: 3rem; padding-top: 1.4rem; border-top: 1px solid #2C3E4C; color: #8E9AA2; font-size: .88rem; }
 
 /* Cart drawer */
 #cartDrawer { --bs-offcanvas-width: min(440px, 100vw); }
@@ -296,3 +297,21 @@ svg { display: block; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+
+
+
+/* Category pages */
+.cat-hero { padding-block: 1.25rem 2.5rem; overflow: hidden; background: color-mix(in srgb, var(--c1) 15%, var(--bs-body-bg)); border-bottom: 6px solid var(--c1); }
+.cat-hero .breadcrumb { --bs-breadcrumb-divider-color: var(--bs-secondary-color); --bs-breadcrumb-item-active-color: var(--bs-secondary-color); font-size: .9rem; }
+.cat-hero .breadcrumb a:hover { text-decoration: underline; }
+.cat-hero__body { display: flex; align-items: center; justify-content: space-between; gap: 2rem; }
+.cat-hero h1 { margin: 0; font: 800 clamp(2.2rem, 5vw, 3.9rem)/1 var(--vn-display); letter-spacing: -.035em; }
+.cat-hero p { max-width: 52ch; margin: .8rem 0 0; color: var(--bs-secondary-color); font-size: 1.1rem; }
+.cat-hero__art { flex: none; width: clamp(110px, 18vw, 190px); height: auto; margin-block: -1rem; }
+.toolbar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+.toolbar .form-select { width: auto; border: 1.5px solid var(--bs-border-color); border-radius: 999px; background-color: var(--bs-body-bg); }
+.empty-state { max-width: 46ch; margin-inline: auto; padding: 4rem 1rem; text-align: center; }
+.empty-state h2 { font: 800 1.9rem/1.1 var(--vn-display); letter-spacing: -.03em; }
+.empty-state p { color: var(--bs-secondary-color); }
+.pagination { --bs-pagination-color: var(--bs-body-color); --bs-pagination-bg: transparent; --bs-pagination-border-color: var(--bs-border-color); --bs-pagination-hover-color: var(--bs-body-color); --bs-pagination-hover-bg: var(--bs-tertiary-bg); --bs-pagination-hover-border-color: var(--bs-border-color); --bs-pagination-focus-color: var(--bs-body-color); --bs-pagination-focus-bg: var(--bs-tertiary-bg); --bs-pagination-active-bg: var(--vn-accent); --bs-pagination-active-border-color: var(--vn-accent); --bs-pagination-active-color: var(--vn-on-accent); --bs-pagination-disabled-bg: transparent; --bs-pagination-disabled-color: var(--bs-secondary-color); --bs-pagination-disabled-border-color: var(--bs-border-color); }

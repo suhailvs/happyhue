@@ -73,18 +73,18 @@
         <ul class="nav cats">
           {% for cat in categories %}
           <li class="nav-item">
-            <a class="nav-link" href="#{{ cat.anchor }}">{{ cat.name }}</a>
+            <a class="nav-link" href="{{ cat.url }}">{{ cat.name }}</a>
             <div class="mega">
               <div class="container">
                 <div class="row g-4">
                   {% for child in cat.children %}
                   <div class="{% if cat.children|length == 1 %}col-lg-4{% else %}col{% endif %}">
-                    <a class="mlink" href="#{{ cat.anchor }}"><b>{{ child.name }}</b><span>{{ child.menu_blurb|default:child.blurb }}</span></a>
+                    <a class="mlink" href="{{ child.url }}"><b>{{ child.name }}</b><span>{{ child.menu_blurb|default:child.blurb }}</span></a>
                   </div>
                   {% endfor %}
                   {% if cat.promo %}
                   <div class="{% if cat.children|length == 1 %}col-lg-8{% else %}col-lg-3{% endif %}">
-                    <a class="promo" href="{{ cat.promo.href }}" style="--pbg:{{ cat.promo.bg }}">
+                    <a class="promo" href="{% url 'store:home' %}{{ cat.promo.href }}" style="--pbg:{{ cat.promo.bg }}">
                       <svg viewBox="0 0 120 120" aria-hidden="true" style="{{ cat.promo.c|css_vars }}"><use href="#{{ cat.promo.icon }}"/></svg>
                       <b>{{ cat.promo.title }}</b><span>{{ cat.promo.link }}</span>
                     </a>
@@ -95,9 +95,9 @@
             </div>
           </li>
           {% endfor %}
-          <li class="nav-item ms-auto"><a class="nav-link" href="#shop">New arrivals</a></li>
-          <li class="nav-item"><a class="nav-link" href="#learn">Learn</a></li>
-          <li class="nav-item"><a class="nav-link text-sale" href="#shop">Sale</a></li>
+          <li class="nav-item ms-auto"><a class="nav-link" href="{% url 'store:home' %}#shop">New arrivals</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'store:home' %}#learn">Learn</a></li>
+          <li class="nav-item"><a class="nav-link text-sale" href="{% url 'store:home' %}#shop">Sale</a></li>
         </ul>
       </div>
     </nav>
@@ -119,15 +119,16 @@
           </h2>
           <div id="m-{{ cat.slug }}" class="accordion-collapse collapse{% if forloop.first %} show{% endif %}" data-bs-parent="#mobileAccordion">
             <div class="accordion-body pt-0">
-              {% for child in cat.children %}<a class="d-block py-2" href="#{{ cat.anchor }}" data-bs-dismiss="offcanvas">{{ child.name }}</a>{% endfor %}
+              {% for child in cat.children %}<a class="d-block py-2" href="{{ child.url }}" data-bs-dismiss="offcanvas">
+                {{ child.name }}</a>{% endfor %}
             </div>
           </div>
         </div>
         {% endfor %}
       </div>
-      <a class="mobile-link" href="#shop" data-bs-dismiss="offcanvas">New arrivals</a>
-      <a class="mobile-link" href="#learn" data-bs-dismiss="offcanvas">Learn</a>
-      <a class="mobile-link text-sale" href="#shop" data-bs-dismiss="offcanvas">Sale</a>
+      <a class="mobile-link" href="{% url 'store:home' %}#shop" data-bs-dismiss="offcanvas">New arrivals</a>
+      <a class="mobile-link" href="{% url 'store:home' %}#learn" data-bs-dismiss="offcanvas">Learn</a>
+      <a class="mobile-link text-sale" href="{% url 'store:home' %}#shop" data-bs-dismiss="offcanvas">Sale</a>
     </div>
   </div>
 
@@ -145,9 +146,9 @@
         </div>
         {% for cat in categories %}
         <div class="col-6 col-lg-2">
-          <h3 class="h6 mb-3">{{ cat.name }}</h3>
+          <h3 class="h6 mb-3"><a href="{{ cat.url }}">{{ cat.name }}</a></h3>
           <ul class="list-unstyled mb-0">
-            {% for child in cat.children %}<li class="mb-2"><a href="#{{ cat.anchor }}">{{ child.name }}</a></li>{% endfor %}
+            {% for child in cat.children %}<li class="mb-2"><a href="{{ child.url }}">{{ child.name }}</a></li>{% endfor %}
           </ul>
         </div>
         {% endfor %}
@@ -192,3 +193,8 @@
   {% block extra_js %}{% endblock %}
 </body>
 </html>
+
+
+
+
+

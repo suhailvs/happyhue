@@ -17,9 +17,9 @@
         <div class="panel__more">
           <p>{{ cat.panel_text }}</p>
           <ul class="chips list-unstyled">
-            {% for child in cat.children %}<li><a href="#{{ cat.anchor }}">{{ child.name }}</a></li>{% endfor %}
+            {% for child in cat.children %}<li><a href="{{ child.url }}">{{ child.name }}</a></li>{% endfor %}
           </ul>
-          <a class="cta" href="#{{ cat.anchor }}">{{ cat.cta }}</a>
+          <a class="cta" href="{% if cat.cta_href %}{% url 'store:home' %}{{ cat.cta_href }}{% else %}{{ cat.url }}{% endif %}">{{ cat.cta }}</a>
         </div>
         <svg class="panel__art" viewBox="0 0 340 340" aria-hidden="true">
           {% for a in cat.panel_art %}<use href="#{{ a.icon }}" x="{{ a.x }}" y="{{ a.y }}" width="{{ a.size }}" height="{{ a.size }}" style="{{ a.c|css_vars }}"/>{% endfor %}
@@ -35,12 +35,12 @@
   <div class="container">
     <div class="sec-head">
       <div><h2>{{ materials.name }}</h2><p>{{ materials.tagline }}</p></div>
-      <a class="more" href="#">{{ materials.see_all }}</a>
+      <a class="more" href="{{ materials.url }}">{{ materials.see_all }}</a>
     </div>
     <div class="row row-cols-2 row-cols-lg-4 g-3">
       {% for child in materials.children %}
       <div class="col">
-        <a class="tile" href="#" style="{{ child.c|css_vars }}">
+        <a class="tile" href="{{ child.url }}" style="{{ child.c|css_vars }}">
           <span class="n">{{ child.count_label }}</span>
           <svg class="art" viewBox="0 0 120 120" aria-hidden="true"><use href="#{{ child.icon }}"/></svg>
           <h3>{{ child.name }}</h3>
@@ -57,12 +57,12 @@
   <div class="container">
     <div class="sec-head">
       <div><h2>{{ handmade.name }}</h2><p>{{ handmade.tagline }}</p></div>
-      <a class="more" href="#">{{ handmade.see_all }}</a>
+      <a class="more" href="{{ handmade.url }}">{{ handmade.see_all }}</a>
     </div>
     <div class="row g-3">
       {% with lead=handmade.children.0 %}
       <div class="col-lg-6">
-        <a class="tile tile--lead" href="#" style="{{ lead.c|css_vars }}">
+        <a class="tile tile--lead" href="{{ lead.url }}" style="{{ lead.c|css_vars }}">
           <span class="n">{{ lead.count_label }}</span>
           <svg class="art" viewBox="0 0 120 120" aria-hidden="true"><use href="#{{ lead.icon }}"/></svg>
           <h3>{{ lead.name }}</h3>
@@ -74,7 +74,7 @@
         <div class="row row-cols-2 g-3">
           {% for child in handmade.children|slice:"1:" %}
           <div class="col">
-            <a class="tile tile--sm" href="#" style="{{ child.c|css_vars }}">
+            <a class="tile tile--sm" href="{{ child.url }}" style="{{ child.c|css_vars }}">
               <span class="n">{{ child.count_label }}</span>
               <svg class="art" viewBox="0 0 120 120" aria-hidden="true"><use href="#{{ child.icon }}"/></svg>
               <h3>{{ child.name }}</h3>
@@ -255,3 +255,6 @@
 {{ frame_builder|json_script:"frame-builder" }}
 <script src="{% static 'js/home.js' %}"></script>
 {% endblock %}
+
+
+  

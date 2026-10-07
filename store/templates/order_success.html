@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load store_extras %}
+
+{% block title %}Order {{ order.order_number }} | {{ store_name }}{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width:720px">
+    {% if order.is_paid %}
+    <h1 class="h2">Thank you, {{ order.full_name|truncatewords:1 }}.</h1>
+    <p class="text-body-secondary">Payment received. Your order <b>{{ order.order_number }}</b> is confirmed, and we will email {{ order.email }} when it ships.</p>
+    {% else %}
+    <h1 class="h2">We are confirming your payment</h1>
+    <p class="text-body-secondary">Order <b>{{ order.order_number }}</b> is waiting for the bank to confirm. Refresh this page in a minute. If money was deducted, the order will update on its own.</p>
+    {% endif %}
+
+    <div class="border rounded-4 p-4 mt-4">
+      <ul class="list-unstyled mb-3">
+        {% for item in order.items.all %}
+        <li class="d-flex justify-content-between gap-3 py-2 border-bottom">
+          <span>{{ item.name }} <small class="text-body-secondary">x {{ item.quantity }}</small></span>
+          <span>{{ item.line_total|inr }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      <div class="d-flex justify-content-between"><span>Shipping</span><span>{% if order.shipping_fee %}{{ order.shipping_fee|inr }}{% else %}Free{% endif %}</span></div>
+      <div class="d-flex justify-content-between fw-bold fs-5"><span>Total</span><span>{{ order.total|inr }}</span></div>
+      <hr>
+      <p class="mb-0 small text-body-secondary">Shipping to {{ order.full_name }}, {{ order.address_line1 }}{% if order.address_line2 %}, {{ order.address_line2 }}{% endif %}, {{ order.city }}, {{ order.state }} {{ order.pincode }}</p>
+    </div>
+    <a class="btn btn-primary rounded-pill px-4 mt-4" href="{% url 'store:home' %}">Continue shopping</a>
+  </div>
+</section>
+{% endblock %}

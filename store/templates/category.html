@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load static store_extras %}
+
+{% block title %}{{ category.name }} | {{ store_name }} Arts &amp; Crafts{% endblock %}
+{% block meta_description %}{{ category.blurb|default:category.name }} Shop {{ category.name|lower }} at {{ store_name }} Arts &amp; Crafts.{% endblock %}
+
+{% block content %}
+
+<section class="cat-hero" style="{{ category.c|css_vars }}">
+  <div class="container">
+    <nav aria-label="Breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'store:home' %}">Home</a></li>
+        {% if category.parent %}<li class="breadcrumb-item"><a href="{{ category.parent.get_absolute_url }}">{{ category.parent.name }}</a></li>{% endif %}
+        <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
+      </ol>
+    </nav>
+    <div class="cat-hero__body">
+      <div>
+        <h1>{{ category.name }}</h1>
+        {% if category.blurb %}<p>{{ category.blurb }}</p>{% endif %}
+      </div>
+      <svg class="cat-hero__art" viewBox="0 0 120 120" aria-hidden="true"><use href="#{{ category.icon }}"/></svg>
+    </div>
+  </div>
+</section>
+
+<section class="section pt-4">
+  <div class="container">
+
+    {% if subcategories %}
+    <ul class="nav nav-pills cat-pills mb-4" aria-label="{{ pills_root.name }} sub-categories">
+      <li class="nav-item"><a class="nav-link{% if category.pk == pills_root.pk %} active{% endif %}" href="{{ pills_root.get_absolute_url }}"{% if category.pk == pills_root.pk %} aria-current="page"{% endif %}>All</a></li>
+      {% for sub in subcategories %}
+      <li class="nav-item"><a class="nav-link{% if sub.pk == category.pk %} active{% endif %}" href="{{ sub.get_absolute_url }}"{% if sub.pk == category.pk %} aria-current="page"{% endif %}>{{ sub.name }}</a></li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if page_obj.paginator.count %}
+    <form class="toolbar" method="get">
+      <p class="mb-0 text-body-secondary">{{ page_obj.paginator.count }} product{{ page_obj.paginator.count|pluralize }}</p>
+      <div class="d-flex align-items-center gap-2">
+        <label class="small text-body-secondary" for="sort">Sort by</label>
+        <select class="form-select" id="sort" name="sort">
+          {% for key, label in sorts %}<option value="{{ key }}"{% if key == sort %} selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+        <noscript><button class="btn btn-ink btn-sm" type="submit">Apply</button></noscript>
+      </div>
+    </form>
+
+    <div class="row row-cols-2 row-cols-lg-4 g-3 g-lg-4">
+      {% for p in page_obj %}
+      <div class="col">{% include "partials/product_card.html" with p=p %}</div>
+      {% endfor %}
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <nav class="mt-5" aria-label="Product pages">
+      <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link" href="?{% querystring page=page_obj.previous_page_number %}">Previous</a></li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link">Previous</span></li>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+        <li class="page-item{% if num == page_obj.number %} active{% endif %}"><a class="page-link" href="?{% querystring page=num %}"{% if num == page_obj.number %} aria-current="page"{% endif %}>{{ num }}</a></li>
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link" href="?{% querystring page=page_obj.next_page_number %}">Next</a></li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link">Next</span></li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+
+    {% elif builder_url %}
+    <div class="empty-state">
+      <h2>Framed to measure</h2>
+      <p>Custom framing is made to order. Pick a size, a frame and a mat, and see the result as you build it.</p>
+      <a class="btn btn-primary btn-lg rounded-pill px-4" href="{{ builder_url }}">Design your frame</a>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <h2>Nothing here yet</h2>
+      <p>New {{ category.name|lower }} are on their way. Have a look at the rest of the shop in the meantime.</p>
+      <a class="btn btn-primary btn-lg rounded-pill px-4" href="{% url 'store:home' %}">Back to the shop</a>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Re-sort as soon as the choice changes; the Apply button only shows without JavaScript.
+  const sort = document.getElementById('sort');
+  if (sort) sort.addEventListener('change', () => sort.form.submit());
+</script>
+{% endblock %}

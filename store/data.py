@@ -1,15 +1,15 @@
 """Static catalog data for the storefront.
 
-Everything the templates loop over lives here so the page can be rendered
-without a database. When you add models, replace these structures with
-querysets in views.py and the context processor; the template variable
-names can stay the same.
+Categories and products live in the database (store/models.py). Run
+`python manage.py seed_catalog` to load the CATEGORIES and PRODUCTS below.
+After that, CATEGORIES is only read for presentation (hero panel colors,
+promos, headline verbs) and PRODUCTS only by the seed command.
 
 Colors are pigment hex values. A `c` list is [c1, c2, c3] and feeds the SVG
 illustrations through the `css_vars` template filter.
 """
 
-STORE_NAME = "Varnam"
+STORE_NAME = "Happyhue"
 FREE_SHIPPING_THRESHOLD = 1999
 
 ULTRAMARINE = "#2A3BD0"
@@ -120,29 +120,29 @@ CATEGORIES = [
 ]
 
 _PRODUCT_LIST = [
-    {"id": "p1", "name": "Essentials watercolor set, 6 tubes of 5 ml", "by": "Daniel Smith", "price": 4199,
+    {"id": "p1",  "category": "colors","name": "Essentials watercolor set, 6 tubes of 5 ml", "by": "Daniel Smith", "price": 4199,
      "icon": "a-tube", "c": [ULTRAMARINE, "#8E97AE"], "badge": "Bestseller"},
-    {"id": "p2", "name": "Anna Mason brush set of 5", "by": "RoseMary", "price": 3345,
+    {"id": "p2", "category": "brushes",  "name": "Anna Mason brush set of 5", "by": "RoseMary", "price": 3345,
      "icon": "a-brush", "c": ["#1F2A5C", "#B77B4A"]},
-    {"id": "p3", "name": "Quinacridone Gold watercolor, 5 ml tube", "by": "Daniel Smith", "price": 899,
+    {"id": "p3", "category": "colors", "name": "Quinacridone Gold watercolor, 5 ml tube", "by": "Daniel Smith", "price": 899,
      "icon": "a-tube", "c": [GOLD, "#8E97AE"], "badge": "Bestseller"},
-    {"id": "p4", "name": "Cold press watercolor pad, A4, 300 gsm", "by": "Hahnemühle", "price": 1150,
+    {"id": "p4",  "category": "surfaces","name": "Cold press watercolor pad, A4, 300 gsm", "by": "Hahnemühle", "price": 1150,
      "icon": "a-pad", "c": [VIRIDIAN, "#E3E7F1", "#4C7BE0"]},
-    {"id": "p5", "name": "Graphite drawing pencils, set of 12", "by": "Camel", "price": 640, "old_price": 790,
+    {"id": "p5",  "category": "drawing", "name": "Graphite drawing pencils, set of 12", "by": "Camel", "price": 640, "old_price": 790,
      "icon": "a-pencil", "c": [GOLD, VIRIDIAN, ROSE], "badge": "Sale"},
-    {"id": "p6", "name": "Hand-painted dream catcher, 20 cm", "by": "Handmade by Meera", "price": 750,
+    {"id": "p6", "category": "dream-catchers", "name": "Hand-painted dream catcher, 20 cm", "by": "Handmade by Meera", "price": 750,
      "icon": "a-dream", "c": [ROSE, GOLD, VIRIDIAN], "badge": "New"},
-    {"id": "p7", "name": "Block-printed zip pouch, pencil size", "by": "Handmade by Fathima", "price": 420,
+    {"id": "p7", "category": "pouches","name": "Block-printed zip pouch, pencil size", "by": "Handmade by Fathima", "price": 420,
      "icon": "a-pouch", "c": [VIRIDIAN, GOLD, "#F6E7B4"]},
-    {"id": "p8", "name": "Hand-stitched sketchbook, 120 pages", "by": "Handmade by Anwar", "price": 980,
+    {"id": "p8", "category": "sketchbooks-journals",  "name": "Hand-stitched sketchbook, 120 pages", "by": "Handmade by Anwar", "price": 980,
      "icon": "a-book", "c": ["#8B5A3C", GOLD]},
-    {"id": "p9", "name": "Original acrylic landscape, 12 × 16 in", "by": "Handmade by Meera", "price": 6500,
+    {"id": "p9", "category": "paintings-original", "stock": 1,"name": "Original acrylic landscape, 12 × 16 in", "by": "Handmade by Meera", "price": 6500,
      "icon": "a-painting", "c": [VIRIDIAN, "#8B5A3C", GOLD], "badge": "One of one"},
-    {"id": "p10", "name": "Scrapbook album with kraft pages", "by": "Handmade by Anwar", "price": 860,
+    {"id": "p10","category": "scrapbooks",  "name": "Scrapbook album with kraft pages", "by": "Handmade by Anwar", "price": 860,
      "icon": "a-scrap", "c": [ROSE, GOLD, ULTRAMARINE]},
-    {"id": "p11", "name": "Cobalt Teal Blue watercolor, 5 ml tube", "by": "Daniel Smith", "price": 899,
+    {"id": "p11", "category": "colors","name": "Cobalt Teal Blue watercolor, 5 ml tube", "by": "Daniel Smith", "price": 899,
      "icon": "a-tube", "c": ["#1AA6A0", "#8E97AE"], "badge": "New"},
-    {"id": "p12", "name": "Synthetic round brush, size 6", "by": "Silver Brush", "price": 560,
+    {"id": "p12", "category": "brushes", "name": "Synthetic round brush, size 6", "by": "Silver Brush", "price": 560,
      "icon": "a-brush", "c": [VIRIDIAN, "#7A4B2A"], "badge": "New"},
 ]
 PRODUCTS = {p["id"]: p for p in _PRODUCT_LIST}
