@@ -2,5 +2,6 @@ Django
 django-crispy-forms
 crispy-bootstrap5
 razorpay
+firebase-admin
 python-decouple
 pillow

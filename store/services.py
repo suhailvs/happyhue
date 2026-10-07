@@ -6,7 +6,7 @@ from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
 
-from .models import Product,Order, OrderItem, Payment
+from .models import Product, Order, OrderItem, Payment
 
 log = logging.getLogger(__name__)
 
@@ -18,13 +18,13 @@ def razorpay_client():
 
 
 @transaction.atomic
-def create_order_from_cart(cart, cleaned):
+def create_order_from_cart(cart, cleaned, user=None):
     """Snapshot the cart into a pending Order. Returns None if the cart is empty."""
     summary = cart.summary()
     if not summary["lines"]:
         return None
     order = Order.objects.create(
-        subtotal=summary["subtotal"], shipping_fee=summary["shipping"], total=summary["total"], **cleaned
+        user=user, subtotal=summary["subtotal"], shipping_fee=summary["shipping"], total=summary["total"], **cleaned
     )
     OrderItem.objects.bulk_create([
         OrderItem(

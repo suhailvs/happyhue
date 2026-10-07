@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Sign in | {{ store_name }}{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width:440px">
+    <h1 class="h2 mb-1">Sign in or create an account</h1>
+    <p class="text-body-secondary mb-4">Enter your mobile number. We will text you a one-time code. No password needed.</p>
+
+    <div id="loginAlert" class="alert alert-danger" role="alert" aria-live="assertive" hidden></div>
+
+    {# Step 1: phone number #}
+    <form id="phoneForm" novalidate>
+      <label class="form-label" for="phone">Mobile number</label>
+      <div class="input-group input-group-lg mb-1">
+        <span class="input-group-text">+91</span>
+        <input id="phone" class="form-control" type="tel" inputmode="numeric" autocomplete="tel-national"
+               maxlength="10" placeholder="10 digit mobile number" required>
+      </div>
+      <div class="invalid-feedback d-block" id="phoneError" hidden>Enter a valid 10 digit mobile number.</div>
+      <button class="btn btn-primary btn-lg rounded-pill w-100 mt-3" type="submit" id="sendBtn">Send code</button>
+    </form>
+
+    {# Step 2: the code #}
+    <form id="otpForm" novalidate hidden>
+      <p class="mb-3">We sent a 6 digit code to <b id="sentTo"></b>.
+        <button type="button" class="btn btn-link p-0 align-baseline" id="changeBtn">Change number</button></p>
+      <label class="form-label" for="otp">One-time code</label>
+      <input id="otp" class="form-control form-control-lg text-center" type="text" inputmode="numeric"
+             autocomplete="one-time-code" maxlength="6" placeholder="------" style="letter-spacing:.4em" required>
+      <button class="btn btn-primary btn-lg rounded-pill w-100 mt-3" type="submit" id="verifyBtn">Verify and continue</button>
+      <p class="small text-body-secondary mt-3 mb-0">Did not get it?
+        <button type="button" class="btn btn-link p-0 align-baseline small" id="resendBtn" disabled>Resend code</button>
+        <span id="resendTimer"></span></p>
+    </form>
+
+    <div id="recaptcha-container"></div>
+    <p class="small text-body-secondary mt-4 mb-0">Protected by reCAPTCHA. Standard message rates may apply.</p>
+  </div>
+</section>
+
+<div id="loginConfig" hidden
+     data-login-url="{% url 'accounts:firebase_login' %}" data-next="{{ next }}"></div>
+{{ firebase_config|json_script:"firebase-config" }}
+{% endblock %}
+
+{% block extra_js %}
+<script type="module" src="{% static 'js/login.js' %}"></script>
+{% endblock %}

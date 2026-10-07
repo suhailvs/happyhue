@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load store_extras %}
+
+{% block title %}My orders | {{ store_name }}{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width:820px">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+      <div>
+        <h1 class="h2 mb-1">My orders</h1>
+        <p class="text-body-secondary mb-0">Signed in as {{ request.user.phone }}</p>
+      </div>
+      <form method="post" action="{% url 'accounts:logout' %}">
+        {% csrf_token %}
+        <button class="btn btn-outline-secondary rounded-pill px-4" type="submit">Sign out</button>
+      </form>
+    </div>
+
+    {% for order in orders %}
+    <a class="d-block border rounded-4 p-4 mb-3 text-reset text-decoration-none" href="{% url 'store:order_success' order.order_number %}">
+      <div class="d-flex justify-content-between gap-3">
+        <div>
+          <b>{{ order.order_number }}</b>
+          <span class="badge text-bg-light border ms-2">{{ order.get_status_display }}</span>
+          <div class="small text-body-secondary mt-1">{{ order.created_at|date:"j M Y" }}</div>
+        </div>
+        <b>{{ order.total|inr }}</b>
+      </div>
+      <div class="small text-body-secondary mt-2">
+        {% for item in order.items.all %}{{ item.name }} x {{ item.quantity }}{% if not forloop.last %}, {% endif %}{% endfor %}
+      </div>
+    </a>
+    {% empty %}
+    <div class="empty-state">
+      <h2>No orders yet</h2>
+      <p>When you place an order it will show up here.</p>
+      <a class="btn btn-primary btn-lg rounded-pill px-4" href="{% url 'store:home' %}">Start shopping</a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

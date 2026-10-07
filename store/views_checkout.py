@@ -4,6 +4,7 @@ import logging
 
 import razorpay
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -24,26 +25,49 @@ def _remember(request, order):
     request.session[SESSION_ORDERS] = [*request.session.get(SESSION_ORDERS, []), order.order_number][-20:]
 
 
+def _fill_profile(user, cleaned):
+    """First order doubles as profile setup: remember the name and email they typed."""
+    updates = []
+    if not user.name:
+        user.name = cleaned["full_name"]
+        updates.append("name")
+    if not user.email:
+        user.email = cleaned["email"]
+        updates.append("email")
+    if updates:
+        user.save(update_fields=updates)
+
+
+@login_required
 def checkout(request):
     cart = Cart(request)
     summary = cart.summary()
     if not summary["lines"]:
         return redirect("store:home")
     return render(request, "checkout.html", {
-        "form": CheckoutForm(), "summary": summary, "razorpay_key": settings.RAZORPAY_KEY_ID,
+        "form": CheckoutForm(initial={
+            "full_name": request.user.name, "email": request.user.email, "phone": request.user.national_number,
+        }),
+        "summary": summary, "razorpay_key": settings.RAZORPAY_KEY_ID,
     })
 
 
 @require_POST
 def checkout_create(request):
     """Validate the address, snapshot the cart into an Order, create the Razorpay order."""
+    if not request.user.is_authenticated:
+        return JsonResponse({
+            "ok": False, "message": "Please sign in to continue.",
+            "login_url": f'{reverse("accounts:login")}?next={reverse("store:checkout")}',
+        }, status=401)
     form = CheckoutForm(request.POST)
     if not form.is_valid():
         return JsonResponse({"ok": False, "errors": form.errors.get_json_data()}, status=400)
 
-    order = services.create_order_from_cart(Cart(request), form.cleaned_data)
+    order = services.create_order_from_cart(Cart(request), form.cleaned_data, user=request.user)
     if order is None:
         return JsonResponse({"ok": False, "message": "Your cart is empty."}, status=400)
+    _fill_profile(request.user, form.cleaned_data)
 
     try:
         payment = services.create_razorpay_order(order)
@@ -105,11 +129,12 @@ def checkout_failed(request):
 
 
 def order_success(request, order_number):
-    # Only the browser session that placed the order can open this page.
-    if order_number not in request.session.get(SESSION_ORDERS, []):
-        raise Http404
+    # Only the person who placed the order can open this page: the owner, or the browser session that paid.
     order = Order.objects.prefetch_related("items").filter(order_number=order_number).first()
-    if not order:
+    mine = order_number in request.session.get(SESSION_ORDERS, []) or (
+        request.user.is_authenticated and order is not None and order.user_id == request.user.pk
+    )
+    if not order or not mine:
         raise Http404
     return render(request, "order_success.html", {"order": order})
 

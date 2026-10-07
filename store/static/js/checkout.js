@@ -50,6 +50,7 @@
       busy(false); return showAlert('Network error. Please try again.');
     }
     const { res, data } = result;
+    if (res.status === 401 && data.login_url) { location.href = data.login_url; return; }
     if (!res.ok || !data.ok) {
       busy(false);
       if (data.errors) showErrors(data.errors);

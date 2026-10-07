@@ -1,12 +1,13 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.utils.text import slugify
 from decimal import Decimal
-
+from django.conf import settings
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 
-
+MAX_IMAGE_BYTES = 5 * 1024 * 1024
 def split_colors(value):
     return [c.strip() for c in value.split(",") if c.strip()]
 
@@ -61,7 +62,8 @@ class Category(models.Model):
 
 class ProductQuerySet(models.QuerySet):
     def active(self):
-        return self.filter(is_active=True, category__is_active=True)
+        # Prefetch images so cards, the cart and galleries don't query once per product.
+        return self.filter(is_active=True, category__is_active=True).prefetch_related("images")
 
 
 class Product(models.Model):
@@ -128,14 +130,43 @@ class Product(models.Model):
     def in_stock(self):
         return self.stock > 0
 
+    def get_absolute_url(self):
+        return reverse("store:product", args=[self.slug])
+
+    @property
+    def gallery(self):
+        """All images in display order. Uses the prefetch cache when it is there."""
+        return list(self.images.all())
+
+    @property
+    def main_image(self):
+        images = self.gallery
+        return images[0] if images else None
 
 
+def validate_image_size(f):
+    if f.size > MAX_IMAGE_BYTES:
+        raise ValidationError(f"Images must be under {MAX_IMAGE_BYTES // (1024 * 1024)} MB.")
+
+
+class ProductImage(models.Model):
+    """A product can have any number of images. The lowest sort order is the main image."""
+
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
+    image = models.ImageField(upload_to="products/%Y/%m/", validators=[validate_image_size])
+    alt = models.CharField(max_length=160, blank=True, help_text="Short description for screen readers.")
+    sort_order = models.PositiveSmallIntegerField(default=0, help_text="Lower numbers first. The first image is the main one.")
+
+    class Meta:
+        ordering = ["sort_order", "id"]
+
+    def __str__(self):
+        return f"{self.product.name} image {self.pk}"
 
 
 
 def new_order_number():
     return "HH" + get_random_string(8, "ABCDEFGHJKLMNPQRSTUVWXYZ23456789")
-
 
 class Order(models.Model):
     class Status(models.TextChoices):
@@ -149,6 +180,9 @@ class Order(models.Model):
 
     order_number = models.CharField(max_length=12, unique=True, default=new_order_number, editable=False)
     status = models.CharField(max_length=12, choices=Status.choices, default=Status.PENDING, db_index=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="orders"
+    )
 
     full_name = models.CharField(max_length=120)
     email = models.EmailField()

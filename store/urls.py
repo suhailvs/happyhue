@@ -1,13 +1,15 @@
 from django.urls import path
 
-from . import views, views_cart, views_checkout
+from . import views, views_cart, views_checkout, views_product
 
 app_name = "store"
 
 urlpatterns = [
     path("", views.home, name="home"),
     path("shop/<slug:slug>/", views.category, name="category"),
+    path("product/<slug:slug>/", views_product.product, name="product"),
 
+    # Cart (JSON)
     path("cart/", views_cart.cart_detail, name="cart"),
     path("cart/add/", views_cart.cart_add, name="cart_add"),
     path("cart/update/", views_cart.cart_update, name="cart_update"),

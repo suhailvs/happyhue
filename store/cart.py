@@ -109,6 +109,7 @@ class Cart:
                 out.append({
                     "key": key, "kind": "product", "product": p, "name": p.name, "by": p.brand,
                     "icon": p.icon, "colors": p.c, "unit_price": p.price, "qty": qty,
+                    "image": p.main_image.image.url if p.main_image else "", "url": p.get_absolute_url(),
                     "max_qty": min(p.stock, MAX_QTY), "options": {},
                 })
             else:
@@ -119,7 +120,7 @@ class Cart:
                 out.append({
                     "key": key, "kind": "framing", "product": None, "name": "Custom framing",
                     "by": framing_summary(options), "icon": "a-frame",
-                    "colors": ["#F1F1EE", data.ULTRAMARINE, data.GOLD], "unit_price": price,
+                    "colors": ["#F1F1EE", data.ULTRAMARINE, data.GOLD], "unit_price": price, "image": "", "url": "",
                     "qty": l["qty"], "max_qty": MAX_QTY, "options": options,
                 })
         for key in stale:
@@ -155,6 +156,7 @@ class Cart:
             "lines": [
                 {
                     "key": l["key"], "name": l["name"], "by": l["by"], "icon": l["icon"], "colors": l["colors"],
+                    "image": l["image"], "url": l["url"],
                     "price": float(l["unit_price"]), "qty": l["qty"], "max_qty": l["max_qty"],
                     "line_total": float(l["line_total"]),
                 }

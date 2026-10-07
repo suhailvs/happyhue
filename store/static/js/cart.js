@@ -40,8 +40,10 @@
     } else {
       box.innerHTML = cart.lines.map((l) => `
         <div class="d-flex gap-3 py-3 border-bottom" data-key="${esc(l.key)}">
-          <svg viewBox="0 0 120 120" width="64" height="64" aria-hidden="true"
-               style="--c1:${esc(l.colors[0] || '#999')};--c2:${esc(l.colors[1] || '#999')};--c3:${esc(l.colors[2] || '#999')}"><use href="#${esc(l.icon)}"/></svg>
+          ${l.image
+            ? `<img src="${esc(l.image)}" alt="" width="64" height="64" style="object-fit:cover;border-radius:8px;flex:none">`
+            : `<svg viewBox="0 0 120 120" width="64" height="64" aria-hidden="true"
+               style="--c1:${esc(l.colors[0] || '#999')};--c2:${esc(l.colors[1] || '#999')};--c3:${esc(l.colors[2] || '#999')}"><use href="#${esc(l.icon)}"/></svg>`}
           <div class="flex-grow-1">
             <div class="fw-semibold">${esc(l.name)}</div>
             <div class="small text-body-secondary">${esc(l.by)}</div>

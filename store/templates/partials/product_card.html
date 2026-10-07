@@ -1,16 +1,17 @@
 {% load store_extras l10n %}
 {# Expects `p`, a Product. #}
 <article class="pcard" style="{{ p.c|css_vars }}">
-  <div class="pcard-img">
+  <div class="pcard-img" style="position:relative;overflow:hidden">
+    {% with img=p.main_image %}{% if img %}<a href="{{ p.get_absolute_url }}" tabindex="-1" aria-hidden="true"><img src="{{ img.image.url }}" alt="" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></a>{% endif %}{% endwith %}
     {% if p.badge %}<span class="badge pcard-badge{% if p.badge == 'Sale' %} pcard-badge--sale{% endif %}">{{ p.badge }}</span>{% endif %}
     <button class="wish" type="button" data-wish="{{ p.id }}" aria-pressed="false" aria-label="Save {{ p.name }} to wishlist">
       <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#u-heart"/></svg>
     </button>
-    <svg viewBox="0 0 120 120" aria-hidden="true"><use href="#{{ p.icon }}"/></svg>
+    {% if not p.main_image %}<svg viewBox="0 0 120 120" aria-hidden="true"><use href="#{{ p.icon }}"/></svg>{% endif %}
   </div>
   <div class="pt-3">
     <p class="small text-body-secondary mb-0">{{ p.by }}</p>
-    <h3 class="pcard-name">{{ p.name }}</h3>
+    <h3 class="pcard-name"><a href="{{ p.get_absolute_url }}" class="text-reset text-decoration-none">{{ p.name }}</a></h3>
     <p class="pcard-price mb-0">{{ p.price|inr }}{% if p.old_price %}<s>{{ p.old_price|inr }}</s>{% endif %}</p>
     {% if p.in_stock %}
     <button class="btn btn-ink w-100 mt-3" type="button" data-add
