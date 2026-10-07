@@ -40,9 +40,12 @@ const ERRORS = {
 const explain = (e) => ERRORS[e && e.code] || 'Something went wrong. Please try again.';
 
 function freshVerifier() {
-  if (verifier) { try { verifier.clear(); } catch (e) { /* already gone */ } }
-  $('recaptcha-container').innerHTML = '';
-  verifier = new RecaptchaVerifier(auth, $('recaptcha-container'), { size: 'invisible' });
+  if (verifier) { try { verifier.clear(); } catch (e) { /* already gone */ } verifier = null; }
+  const host = $('recaptcha-container');
+  host.innerHTML = '';
+  const slot = document.createElement('div');   // new element every time
+  host.appendChild(slot);
+  verifier = new RecaptchaVerifier(auth, slot, { size: 'invisible' });
   return verifier;
 }
 
@@ -71,7 +74,10 @@ async function sendCode() {
     $('otp').focus();
     startTimer();
   } catch (e) {
+    console.error('send OTP failed:', e.code, e);   // helpful while debugging
     showAlert(explain(e));
+    try { verifier && verifier.clear(); } catch (_) { /* ignore */ }
+    verifier = null;
   } finally {
     btn.disabled = false;
   }
