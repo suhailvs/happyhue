@@ -64,7 +64,7 @@
         <div class="dropdown">
           <button class="icon-btn has-label dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Account menu">
             <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#u-user"/></svg>
-            <span class="d-none d-md-inline">{{ user.first_name|default:user.email|truncatewords:1 }}</span>
+            <span class="d-md-inline">{{ user.first_name|default:user.email|truncatewords:1 }}</span>
           </button>
           <ul class="dropdown-menu dropdown-menu-end">
             <li><a class="dropdown-item" href="{% url 'accounts:orders' %}">Orders</a></li>
