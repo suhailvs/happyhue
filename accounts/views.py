@@ -13,7 +13,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 
-from .firebase import FirebaseAuthError, verify_phone_token
+from .google_signin import GoogleAuthFailed, verify_google_token
 from .models import User
 
 log = logging.getLogger(__name__)
@@ -33,52 +33,54 @@ def login_page(request):
         return redirect(nxt)
     return render(request, "accounts/login.html", {
         "next": nxt,
-        "firebase_config": getattr(settings, "FIREBASE_WEB_CONFIG", {}),
+        "google_client_id": getattr(settings, "GOOGLE_CLIENT_ID", ""),
     })
 
 
-def _get_or_create_user(uid, phone):
-    """Find the customer by phone (the identity that matters) and attach the Firebase uid."""
-    user = User.objects.filter(phone=phone).first() or User.objects.filter(firebase_uid=uid).first()
+def _get_or_create_user(sub, email, name):
+    """Find the customer by Google id, then by email, and attach the Google id. Returns (user, created)."""
+    created = False
+    user = User.objects.filter(google_sub=sub).first() or User.objects.filter(email__iexact=email).first()
     if user is None:
         try:
             with transaction.atomic():
-                user = User.objects.create_user(phone=phone, firebase_uid=uid)
+                user = User.objects.create_user(email=email, google_sub=sub, name=name)
+                created = True
         except IntegrityError:  # two tabs verifying at once
-            user = User.objects.get(phone=phone)
+            user = User.objects.get(email__iexact=email)
     updates = []
-    if user.firebase_uid != uid and not User.objects.exclude(pk=user.pk).filter(firebase_uid=uid).exists():
-        user.firebase_uid = uid
-        updates.append("firebase_uid")
-    if user.phone != phone and not User.objects.exclude(pk=user.pk).filter(phone=phone).exists():
-        user.phone = phone  # the customer changed their number in Firebase
-        updates.append("phone")
+    if not user.google_sub:
+        user.google_sub = sub
+        updates.append("google_sub")
+    if name and not user.name:
+        user.name = name
+        updates.append("name")
     if updates:
         user.save(update_fields=updates)
-    return user
+    return user, created
 
 
 @require_POST
-def firebase_login(request):
+def google_login(request):
     try:
         body = json.loads(request.body or b"{}")
     except ValueError:
         body = {}
     try:
-        uid, phone = verify_phone_token(body.get("id_token"))
-    except FirebaseAuthError as exc:
+        sub, email, name = verify_google_token(body.get("credential"))
+    except GoogleAuthFailed as exc:
         return JsonResponse({"ok": False, "message": str(exc)}, status=401)
     except ImproperlyConfigured:
-        log.exception("Firebase is not configured")
+        log.exception("Google sign-in is not configured")
         return JsonResponse({"ok": False, "message": "Sign-in is not available right now."}, status=500)
 
-    user = _get_or_create_user(uid, phone)
+    user, created = _get_or_create_user(sub, email, name)
     if not user.is_active:
         return JsonResponse({"ok": False, "message": "This account is disabled."}, status=403)
 
     # The cart lives in the session, and login() keeps it, so a guest's cart follows them in.
     login(request, user, backend="django.contrib.auth.backends.ModelBackend")
-    return JsonResponse({"ok": True, "redirect": _safe_next(request, body.get("next")), "new": not user.name})
+    return JsonResponse({"ok": True, "redirect": _safe_next(request, body.get("next")), "new": created})
 
 
 @require_POST

@@ -121,10 +121,5 @@ RAZORPAY_WEBHOOK_SECRET = config("RAZORPAY_WEBHOOK_SECRET") #os.environ[""]
 SHIPPING_FEE = 99 
 
 
-FIREBASE_WEB_CONFIG = {
-    "apiKey": config("FIREBASE_API_KEY"),
-    "authDomain": config("FIREBASE_AUTH_DOMAIN"),
-    "projectId": config("FIREBASE_PROJECT_ID"),
-    "appId": config("FIREBASE_APP_ID"),
-}
-FIREBASE_CREDENTIALS_FILE = config("FIREBASE_CREDENTIALS_FILE", "")
+GOOGLE_CLIENT_ID = config("GOOGLE_CLIENT_ID")
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"

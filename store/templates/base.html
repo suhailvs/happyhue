@@ -53,14 +53,28 @@
         {{ store_name }}
       </a>
 
-      <form class="search" role="search" action="{% url 'store:home' %}" method="get">
+      <!-- <form class="search" role="search" action="{% url 'store:home' %}" method="get">
         <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#u-search"/></svg>
         <label class="visually-hidden" for="q">Search the store</label>
         <input id="q" name="q" type="search" class="form-control" placeholder="Search paints, brushes, sketchbooks" autocomplete="off">
-      </form>
+      </form> -->
 
       <div class="ms-auto d-flex gap-1">
-        <a class="icon-btn" href="{% if user.is_authenticated %}{% url 'accounts:orders' %}{% else %}{% url 'accounts:login' %}{% if request.resolver_match.view_name != 'accounts:login' %}?next={{ request.get_full_path|urlencode }}{% endif %}{% endif %}" aria-label="{% if user.is_authenticated %}My account and orders{% else %}Sign in{% endif %}"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#u-user"/></svg></a>
+        {% if user.is_authenticated %}
+        <div class="dropdown">
+          <button class="icon-btn has-label dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Account menu">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#u-user"/></svg>
+            <span class="d-none d-md-inline">{{ user.first_name|default:"Account"|truncatewords:1 }}</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="{# url 'accounts:profile' #}">My profile</a></li>
+            <li><a class="dropdown-item" href="{% url 'accounts:orders' %}">Orders</a></li>
+            <li><a class="dropdown-item" href="{# url 'accounts:addresses' #}">Saved addresses</a></li>
+          </ul>
+        </div>
+        {% else %}
+        <a class="icon-btn" href="{% url 'accounts:login' %}{% if request.resolver_match.view_name != 'accounts:login' %}?next={{ request.get_full_path|urlencode }}{% endif %}" aria-label="Sign in"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#u-user"/></svg></a>
+        {% endif %}
         <a class="icon-btn" href="#" aria-label="Wishlist"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#u-heart"/></svg><span class="count" id="wishCount" hidden>0</span></a>
         <button class="icon-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartDrawer" aria-controls="cartDrawer" aria-label="Open cart">
           <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#u-bag"/></svg><span class="count" id="cartCount" hidden>0</span>

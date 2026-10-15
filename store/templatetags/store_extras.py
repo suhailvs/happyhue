@@ -29,6 +29,7 @@ def css_vars(colors):
 
     The SVG illustrations in partials/sprite.html read --c1, --c2 and --c3.
     """
+    if not colors: return ""
     colors = list(colors)
     c1 = colors[0]
     c2 = colors[1] if len(colors) > 1 else c1

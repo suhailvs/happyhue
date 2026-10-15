@@ -23,58 +23,63 @@ def normalize_phone(raw):
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
-    def _create(self, phone, password, **extra):
-        phone = normalize_phone(phone)
-        if not phone:
-            raise ValueError("A valid phone number is required.")
-        user = self.model(phone=phone, **extra)
+    def _create(self, email, password, **extra):
+        email = self.normalize_email(email).strip().lower()
+        if not email:
+            raise ValueError("An email address is required.")
+        user = self.model(email=email, **extra)
         if password:
             user.set_password(password)
         else:
-            user.set_unusable_password()  # customers sign in with an OTP, never a password
+            user.set_unusable_password()  # customers sign in with Google, never a password
         user.save(using=self._db)
         return user
 
-    def create_user(self, phone, password=None, **extra):
+    def create_user(self, email, password=None, **extra):
         extra.setdefault("is_staff", False)
         extra.setdefault("is_superuser", False)
-        return self._create(phone, password, **extra)
+        return self._create(email, password, **extra)
 
-    def create_superuser(self, phone, password=None, **extra):
+    def create_superuser(self, email, password=None, **extra):
         extra.setdefault("is_staff", True)
         extra.setdefault("is_superuser", True)
         if not password:
             raise ValueError("Superusers need a password to sign in to the admin.")
-        return self._create(phone, password, **extra)
+        return self._create(email, password, **extra)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    phone = models.CharField(max_length=16, unique=True, validators=[phone_validator], help_text="International format, e.g. +919876543210.")
-    firebase_uid = models.CharField(max_length=128, unique=True, null=True, blank=True, editable=False)
+    email = models.EmailField(unique=True)
+    google_sub = models.CharField(max_length=64, unique=True, null=True, blank=True, editable=False)
     name = models.CharField(max_length=120, blank=True)
-    email = models.EmailField(blank=True)
+    phone = models.CharField(
+        max_length=16, blank=True, validators=[phone_validator],
+        help_text="Optional. International format, e.g. +919876543210.",
+    )
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False, help_text="Can sign in to the admin site.")
     date_joined = models.DateTimeField(default=timezone.now)
 
     objects = UserManager()
 
-    USERNAME_FIELD = "phone"
+    USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
     class Meta:
         ordering = ["-date_joined"]
 
     def __str__(self):
-        return self.name or self.phone
+        return self.name or self.email
 
     def get_full_name(self):
-        return self.name or self.phone
+        return self.name or self.email
 
     def get_short_name(self):
-        return (self.name or self.phone).split(" ")[0]
+        return (self.name or self.email).split(" ")[0].split("@")[0]
 
     @property
     def national_number(self):
-        """Ten digit number for the Indian checkout form."""
+        """Ten digit number for the Indian checkout form. Empty if no phone is saved."""
+        if not self.phone:
+            return ""
         return self.phone[3:] if self.phone.startswith("+91") else self.phone.lstrip("+")

@@ -34,17 +34,17 @@ class Command(BaseCommand):
                 categories[kid.slug] = kid
 
         tab_for = {pid: (key, pos) for key, _label, ids in data.PRODUCT_TABS for pos, pid in enumerate(ids)}
-        for pid, p in data.PRODUCTS.items():
-            tab, pos = tab_for.get(pid, ("", 0))
-            Product.objects.update_or_create(
-                slug=slugify(p["name"])[:200],
-                defaults={
-                    "category": categories[p["category"]], "name": p["name"], "brand": p["by"],
-                    "price": p["price"], "compare_at_price": p.get("old_price"),
-                    "badge": p.get("badge", ""), "stock": p.get("stock", 25), "icon": p["icon"],
-                    "colors": ",".join(p["c"]), "home_tab": tab, "sort_order": pos, "is_active": True,
-                },
-            )
+        # for pid, p in data.PRODUCTS.items():
+        #     tab, pos = tab_for.get(pid, ("", 0))
+        #     Product.objects.update_or_create(
+        #         slug=slugify(p["name"])[:200],
+        #         defaults={
+        #             "category": categories[p["category"]], "name": p["name"], "brand": p["by"],
+        #             "price": p["price"], "compare_at_price": p.get("old_price"),
+        #             "badge": p.get("badge", ""), "stock": p.get("stock", 25), "icon": p["icon"],
+        #             "colors": ",".join(p["c"]), "home_tab": tab, "sort_order": pos, "is_active": True,
+        #         },
+        #     )
         self.stdout.write(self.style.SUCCESS(
             f"{Category.objects.count()} categories, {Product.objects.count()} products."
         ))

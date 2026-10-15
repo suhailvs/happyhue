@@ -8,7 +8,7 @@ from .models import User
 class StaffCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = ("phone",)
+        fields = ("email",)
 
 
 class StaffChangeForm(UserChangeForm):
@@ -21,19 +21,19 @@ class StaffChangeForm(UserChangeForm):
 class UserAdmin(BaseUserAdmin):
     form = StaffChangeForm
     add_form = StaffCreationForm
-    list_display = ("phone", "name", "email", "is_staff", "is_active", "date_joined", "order_count")
+    list_display = ("email", "name", "phone", "is_staff", "is_active", "date_joined", "order_count")
     list_filter = ("is_staff", "is_active", "date_joined")
-    search_fields = ("phone", "name", "email")
+    search_fields = ("email", "name", "phone")
     ordering = ("-date_joined",)
-    readonly_fields = ("firebase_uid", "date_joined", "last_login")
+    readonly_fields = ("google_sub", "date_joined", "last_login")
     fieldsets = (
-        (None, {"fields": ("phone", "password")}),
-        ("Profile", {"fields": ("name", "email", "firebase_uid")}),
+        (None, {"fields": ("email", "password")}),
+        ("Profile", {"fields": ("name", "phone", "google_sub")}),
         ("Permissions", {"fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions")}),
         ("Dates", {"fields": ("last_login", "date_joined")}),
     )
     add_fieldsets = (
-        (None, {"classes": ("wide",), "fields": ("phone", "password1", "password2", "is_staff", "is_superuser")}),
+        (None, {"classes": ("wide",), "fields": ("email", "password1", "password2", "is_staff", "is_superuser")}),
     )
 
     def get_queryset(self, request):
