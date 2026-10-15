@@ -137,4 +137,6 @@ MAILERS = {
         },
     },
 }
+DEFAULT_FROM_EMAIL = "Happyhue <orders@happyhue.in>"
+
 ASSET_VERSION = config("ASSET_VERSION")

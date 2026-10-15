@@ -1,11 +1,10 @@
 """Order creation and Razorpay helpers. Views stay thin; the money logic lives here."""
 import logging
-
 import razorpay
-import threading
+
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
-from django.db import connection, transaction
+from django.db import transaction
 from django.template.loader import render_to_string
 from django.utils import timezone
 
@@ -67,15 +66,10 @@ def send_order_confirmation(order_pk):
 
 
 def _notify_paid(order_pk):
-    def run():
-        try:
-            send_order_confirmation(order_pk)
-        except Exception:
-            log.exception("Confirmation email failed for order pk=%s", order_pk)
-        finally:
-            connection.close()  # the thread opened its own DB connection
-
-    threading.Thread(target=run, daemon=True).start()
+    try:
+        send_order_confirmation(order_pk)
+    except Exception:
+        log.exception("Confirmation email failed for order pk=%s", order_pk)
 
 
 @transaction.atomic
