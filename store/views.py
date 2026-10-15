@@ -28,9 +28,7 @@ def home(request):
         "handmade": sections.get("handmade"),
         "framing": sections.get("art-framing"),
         "tabs": tabs,
-        "brands": data.BRANDS,
         "why_us": data.WHY_US,
-        "posts": data.POSTS,
         "frame_builder": data.FRAME_BUILDER,
     }
     return render(request, "home.html", context)

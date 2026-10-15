@@ -154,10 +154,6 @@ PRODUCT_TABS = [
     ("hand", "Handmade picks", ["p7", "p8", "p9", "p10"]),
 ]
 
-BRANDS = [
-    "Daniel Smith", "Holbein", "Da Vinci", "Hahnemühle", "Silver Brush",
-    "Daler-Rowney", "RoseMary", "Tintoretto", "Camel",
-]
 
 WHY_US = [
     {"title": "Tested by artists", "text": "If it is on the shelf, someone on our team has painted with it.", "color": ULTRAMARINE},
@@ -166,14 +162,6 @@ WHY_US = [
     {"title": "Real answers", "text": "Ask about a paper’s sizing or a pigment’s lightfastness and a person replies.", "color": VIRIDIAN},
 ]
 
-POSTS = [
-    {"title": "Hot press or cold press: which watercolor paper to buy", "read": "6 min read",
-     "icon": "a-pad", "c": [VIRIDIAN, "#E3E7F1", "#4C7BE0"]},
-    {"title": "Acrylic or gouache: picking the right opaque paint", "read": "5 min read",
-     "icon": "a-tube", "c": [GOLD, ULTRAMARINE]},
-    {"title": "A brush size guide that actually makes sense", "read": "4 min read",
-     "icon": "a-brush", "c": ["#7A4B2A", ROSE]},
-]
 
 HELP_LINKS = ["Track order", "Shipping and returns", "Learning center", "Contact"]
 

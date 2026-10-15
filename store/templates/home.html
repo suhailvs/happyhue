@@ -205,18 +205,7 @@
   </div>
 </section>
 
-{# BRANDS #}
-<section class="section bg-body-tertiary">
-  <div class="container">
-    <div class="sec-head">
-      <div><h2>Genuine brands, sourced directly</h2><p>Every tube and brush comes through authorized channels. No grey-market stock.</p></div>
-      <a class="more" href="#">View all brands</a>
-    </div>
-    <ul class="brands list-unstyled" aria-label="Featured brands">
-      {% for b in brands %}<li>{{ b }}</li>{% endfor %}
-    </ul>
-  </div>
-</section>
+
 
 {# WHY #}
 <section class="section">
@@ -229,25 +218,6 @@
   </div>
 </section>
 
-{# LEARN #}
-<section class="section bg-body-tertiary" id="learn">
-  <div class="container">
-    <div class="sec-head">
-      <div><h2>Spend less time guessing, more time making</h2></div>
-      <a class="more" href="#">Visit the learning center</a>
-    </div>
-    <div class="row row-cols-1 row-cols-lg-3 g-4">
-      {% for post in posts %}
-      <div class="col">
-        <a class="post" href="#" style="{{ post.c|css_vars }}">
-          <div class="th"><svg viewBox="0 0 120 120" aria-hidden="true"><use href="#{{ post.icon }}"/></svg></div>
-          <div><h3>{{ post.title }}</h3><p class="mb-0">{{ post.read }}</p></div>
-        </a>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</section>
 
 {% endblock %}
 
