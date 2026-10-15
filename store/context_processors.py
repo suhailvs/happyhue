@@ -1,6 +1,11 @@
 from . import data
 
 from .navigation import get_navigation
+from django.conf import settings
+
+
+def asset_version(request):
+    return {"ASSET_VERSION": settings.ASSET_VERSION}
 
 def storefront(request):
     """Values every page needs: header menus, footer columns, cart threshold."""

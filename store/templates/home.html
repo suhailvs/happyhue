@@ -223,7 +223,7 @@
 
 {% block extra_js %}
 {{ frame_builder|json_script:"frame-builder" }}
-<script src="{% static 'js/home.js' %}"></script>
+<script src="{% static 'js/home.js' %}?v={{ ASSET_VERSION }}"></script>
 {% endblock %}
 
 

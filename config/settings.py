@@ -48,6 +48,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 "store.context_processors.storefront",
+                "store.context_processors.asset_version",
             ],
         },
     },
@@ -136,3 +137,4 @@ MAILERS = {
         },
     },
 }
+ASSET_VERSION = config("ASSET_VERSION")
