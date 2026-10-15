@@ -1,0 +1,24 @@
+{% autoescape off %}Hi {{ order.full_name }},
+
+Thank you for your order at Happyhue. Your payment was received.
+
+Order {{ order.order_number }}
+{% for item in items %}
+- {{ item.name }}{% if item.brand %} ({{ item.brand }}){% endif %}
+  {{ item.quantity }} x Rs. {{ item.unit_price|floatformat:2 }}{% endfor %}
+
+Subtotal: Rs. {{ order.subtotal|floatformat:2 }}
+Shipping: Rs. {{ order.shipping_fee|floatformat:2 }}
+Total paid: Rs. {{ order.total|floatformat:2 }}
+
+Delivering to:
+{{ order.full_name }}
+{{ order.address_line1 }}{% if order.address_line2 %}
+{{ order.address_line2 }}{% endif %}
+{{ order.city }}, {{ order.state }} {{ order.pincode }}
+Phone: {{ order.phone }}
+
+We will email you again when your order ships.
+
+Happyhue
+{% endautoescape %}

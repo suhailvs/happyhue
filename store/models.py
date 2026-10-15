@@ -164,6 +164,34 @@ class ProductImage(models.Model):
         return f"{self.product.name} image {self.pk}"
 
 
+class Address(models.Model):
+    """A saved delivery address. Each user can have many, one of them the default."""
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="addresses")
+    full_name = models.CharField(max_length=120)
+    phone = models.CharField(max_length=15)
+    address_line1 = models.CharField(max_length=200)
+    address_line2 = models.CharField(max_length=200, blank=True)
+    city = models.CharField(max_length=80)
+    state = models.CharField(max_length=80)
+    pincode = models.CharField(max_length=6)
+    is_default = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-is_default", "-created_at"]
+        verbose_name_plural = "addresses"
+
+    def __str__(self):
+        return f"{self.full_name}, {self.city} {self.pincode}"
+
+    def save(self, *args, **kwargs):
+        if not self.pk and not Address.objects.filter(user_id=self.user_id).exists():
+            self.is_default = True  # first address is always the default
+        super().save(*args, **kwargs)
+        if self.is_default:
+            Address.objects.filter(user_id=self.user_id, is_default=True).exclude(pk=self.pk).update(is_default=False)
+
 
 def new_order_number():
     return "HH" + get_random_string(8, "ABCDEFGHJKLMNPQRSTUVWXYZ23456789")

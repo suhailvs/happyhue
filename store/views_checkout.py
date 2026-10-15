@@ -1,4 +1,3 @@
-import hmac
 import json
 import logging
 
@@ -13,7 +12,7 @@ from django.views.decorators.http import require_POST
 
 from . import services
 from .cart import Cart
-from .forms import CheckoutForm
+
 from .models import Order, Payment
 
 log = logging.getLogger(__name__)
@@ -44,10 +43,11 @@ def checkout(request):
     summary = cart.summary()
     if not summary["lines"]:
         return redirect("store:home")
+    addresses = list(request.user.addresses.all())  # default address sorts first
+    if not addresses:
+        return redirect(f'{reverse("store:address_add")}?next={reverse("store:checkout")}')
     return render(request, "checkout.html", {
-        "form": CheckoutForm(initial={
-            "full_name": request.user.name, "email": request.user.email, "phone": request.user.national_number,
-        }),
+        "addresses": addresses, "selected_id": addresses[0].pk,
         "summary": summary, "razorpay_key": settings.RAZORPAY_KEY_ID,
     })
 
@@ -60,14 +60,20 @@ def checkout_create(request):
             "ok": False, "message": "Please sign in to continue.",
             "login_url": f'{reverse("accounts:login")}?next={reverse("store:checkout")}',
         }, status=401)
-    form = CheckoutForm(request.POST)
-    if not form.is_valid():
-        return JsonResponse({"ok": False, "errors": form.errors.get_json_data()}, status=400)
-
-    order = services.create_order_from_cart(Cart(request), form.cleaned_data, user=request.user)
+    address_id = request.POST.get("address_id", "")
+    address = request.user.addresses.filter(pk=address_id).first() if address_id.isdigit() else None
+    if not address:
+        return JsonResponse({"ok": False, "message": "Please choose a delivery address."}, status=400)
+    cleaned = {
+        "full_name": address.full_name, "email": request.user.email, "phone": address.phone,
+        "address_line1": address.address_line1, "address_line2": address.address_line2,
+        "city": address.city, "state": address.state, "pincode": address.pincode,
+        "notes": request.POST.get("notes", "").strip()[:500],
+    }
+    order = services.create_order_from_cart(Cart(request), cleaned, user=request.user)
     if order is None:
         return JsonResponse({"ok": False, "message": "Your cart is empty."}, status=400)
-    _fill_profile(request.user, form.cleaned_data)
+    _fill_profile(request.user, cleaned)
 
     try:
         payment = services.create_razorpay_order(order)

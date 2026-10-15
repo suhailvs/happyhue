@@ -1,0 +1,30 @@
++{% extends "base.html" %}
+{% block title %}{% if address %}Edit{% else %}Add{% endif %} address | {{ store_name }}{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width:640px">
+    <h1 class="h2 mb-4">{% if address %}Edit address{% else %}Add address{% endif %}</h1>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+      <div class="row g-3">
+        {% for field in form %}
+        {% if field.name == "is_default" %}
+        <div class="col-12 form-check ms-2">
+          {{ field }} <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        </div>
+        {% else %}
+        <div class="{% if field.name in 'address_line1 address_line2 full_name' %}col-12{% else %}col-sm-6{% endif %}">
+          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% for e in field.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+      <button class="btn btn-primary rounded-pill px-4 mt-4" type="submit">Save address</button>
+      <a class="btn btn-link mt-4" href="{{ next }}">Cancel</a>
+    </form>
+  </div>
+</section>
+{% endblock %}

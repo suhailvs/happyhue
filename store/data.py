@@ -163,7 +163,7 @@ WHY_US = [
 ]
 
 
-HELP_LINKS = ["Track order", "Shipping and returns", "Learning center", "Contact"]
+# HELP_LINKS = ["Track order", "Shipping and returns", "Learning center", "Contact"]
 
 # Frame builder: rendered as radio inputs in home.html and sent to
 # static/js/home.js with json_script so prices and preview use the same numbers.

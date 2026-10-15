@@ -1,0 +1,31 @@
++{% extends "base.html" %}
+{% block title %}Saved addresses | {{ store_name }}{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width:760px">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="h2 mb-0">Saved addresses</h1>
+      <a class="btn btn-primary rounded-pill px-4" href="{% url 'store:address_add' %}">Add address</a>
+    </div>
+    {% for a in addresses %}
+    <div class="border rounded-4 p-4 mb-3">
+      <b>{{ a.full_name }}</b>{% if a.is_default %} <span class="badge text-bg-secondary">Default</span>{% endif %}
+      <p class="mb-1 mt-2">{{ a.address_line1 }}{% if a.address_line2 %}, {{ a.address_line2 }}{% endif %}<br>
+        {{ a.city }}, {{ a.state }} {{ a.pincode }}</p>
+      <p class="text-body-secondary mb-3">{{ a.phone }}</p>
+      <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-outline-secondary btn-sm rounded-pill" href="{% url 'store:address_edit' a.pk %}">Edit</a>
+        {% if not a.is_default %}
+        <form method="post" action="{% url 'store:address_default' a.pk %}">{% csrf_token %}
+          <button class="btn btn-outline-secondary btn-sm rounded-pill">Make default</button></form>
+        {% endif %}
+        <form method="post" action="{% url 'store:address_delete' a.pk %}" onsubmit="return confirm('Delete this address?')">{% csrf_token %}
+          <button class="btn btn-outline-danger btn-sm rounded-pill">Delete</button></form>
+      </div>
+    </div>
+    {% empty %}
+    <p class="text-body-secondary">You have no saved addresses yet.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

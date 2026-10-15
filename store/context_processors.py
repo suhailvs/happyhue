@@ -8,5 +8,5 @@ def storefront(request):
         "store_name": data.STORE_NAME,
         "categories": get_navigation(request),
         "free_shipping_threshold": data.FREE_SHIPPING_THRESHOLD,
-        "help_links": data.HELP_LINKS,
+        # "help_links": data.HELP_LINKS,
     }

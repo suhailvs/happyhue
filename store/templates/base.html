@@ -64,12 +64,18 @@
         <div class="dropdown">
           <button class="icon-btn has-label dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Account menu">
             <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#u-user"/></svg>
-            <span class="d-none d-md-inline">{{ user.first_name|default:"Account"|truncatewords:1 }}</span>
+            <span class="d-none d-md-inline">{{ user.first_name|default:user.email|truncatewords:1 }}</span>
           </button>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="{# url 'accounts:profile' #}">My profile</a></li>
             <li><a class="dropdown-item" href="{% url 'accounts:orders' %}">Orders</a></li>
-            <li><a class="dropdown-item" href="{# url 'accounts:addresses' #}">Saved addresses</a></li>
+            <li><a class="dropdown-item" href="{% url 'store:addresses' %}">Saved addresses</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <form method="post" action="{% url 'accounts:logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="dropdown-item">Log out</button>
+              </form>
+            </li>
           </ul>
         </div>
         {% else %}
@@ -110,7 +116,6 @@
           </li>
           {% endfor %}
           <li class="nav-item ms-auto"><a class="nav-link" href="{% url 'store:home' %}#shop">New arrivals</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'store:home' %}#learn">Learn</a></li>
           <li class="nav-item"><a class="nav-link text-sale" href="{% url 'store:home' %}#shop">Sale</a></li>
         </ul>
       </div>
@@ -157,7 +162,7 @@
         <div class="col-lg-4">
           <span class="brand text-white">{{ store_name }}</span>
           <p class="foot-muted mt-3 mb-4">Art materials, handmade pieces and custom framing, shipped across India.</p>
-          <a class="btn btn-light rounded-pill px-4" href="#">Chat on WhatsApp</a>
+          <!-- <a class="btn btn-light rounded-pill px-4" href="#">Chat on WhatsApp</a> -->
         </div>
         {% for cat in categories %}
         <div class="col-6 col-lg-2">
@@ -167,16 +172,10 @@
           </ul>
         </div>
         {% endfor %}
-        <div class="col-6 col-lg-2">
-          <h3 class="h6 mb-3">Help</h3>
-          <ul class="list-unstyled mb-0">
-            {% for link in help_links %}<li class="mb-2"><a href="#">{{ link }}</a></li>{% endfor %}
-          </ul>
-        </div>
+        
       </div>
       <div class="foot-legal d-flex flex-wrap justify-content-between gap-2">
         <span>© {% now "Y" %} {{ store_name }} Art Store. All rights reserved.</span>
-        <span>Design mockup with placeholder products and prices.</span>
       </div>
     </div>
   </footer>

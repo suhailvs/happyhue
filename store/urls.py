@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views, views_cart, views_checkout, views_product
+from . import views, views_cart, views_checkout, views_product, views_addresses
 
 app_name = "store"
 
@@ -14,6 +14,12 @@ urlpatterns = [
     path("cart/add/", views_cart.cart_add, name="cart_add"),
     path("cart/update/", views_cart.cart_update, name="cart_update"),
     path("cart/remove/", views_cart.cart_remove, name="cart_remove"),
+  
+    path("addresses/", views_addresses.address_list, name="addresses"),
+    path("addresses/new/", views_addresses.address_edit, name="address_add"),
+    path("addresses/<int:pk>/edit/", views_addresses.address_edit, name="address_edit"),
+    path("addresses/<int:pk>/delete/", views_addresses.address_delete, name="address_delete"),
+    path("addresses/<int:pk>/default/", views_addresses.address_default, name="address_default"),
 
     # Checkout and Razorpay
     path("checkout/", views_checkout.checkout, name="checkout"),

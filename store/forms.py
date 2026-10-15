@@ -1,5 +1,6 @@
 from django import forms
 from django.core.validators import RegexValidator
+from .models import Address
 
 INDIAN_STATES = [
     "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana",
@@ -10,29 +11,22 @@ INDIAN_STATES = [
 ]
 
 
-class CheckoutForm(forms.Form):
-    full_name = forms.CharField(max_length=120, label="Full name")
-    email = forms.EmailField(label="Email")
-    phone = forms.CharField(
-        max_length=10, label="Mobile number",
-        validators=[RegexValidator(r"^[6-9]\d{9}$", "Enter a 10 digit Indian mobile number.")],
-    )
-    address_line1 = forms.CharField(max_length=200, label="Address")
-    address_line2 = forms.CharField(max_length=200, required=False, label="Apartment, landmark (optional)")
-    city = forms.CharField(max_length=80, label="City")
-    state = forms.ChoiceField(choices=[("", "Select state")] + [(s, s) for s in INDIAN_STATES], label="State")
-    pincode = forms.CharField(
-        max_length=6, label="PIN code",
-        validators=[RegexValidator(r"^[1-9]\d{5}$", "Enter a valid 6 digit PIN code.")],
-    )
-    notes = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows": 2}), label="Order notes (optional)")
+
+
+class AddressForm(forms.ModelForm):
+    pincode = forms.CharField(max_length=6, validators=[RegexValidator(r"^\d{6}$", "Enter a 6 digit pincode.")])
+    state = forms.ChoiceField(choices=[("", "Select state")] + [(s, s) for s in INDIAN_STATES])
+    class Meta:
+        model = Address
+        fields = ["full_name", "phone", "address_line1", "address_line2", "city", "state", "pincode", "is_default"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for name, field in self.fields.items():
-            css = "form-select" if isinstance(field, forms.ChoiceField) else "form-control"
-            field.widget.attrs["class"] = css
-        self.fields["phone"].widget.attrs.update(inputmode="numeric", autocomplete="tel-national")
-        self.fields["pincode"].widget.attrs.update(inputmode="numeric", autocomplete="postal-code")
-        self.fields["email"].widget.attrs["autocomplete"] = "email"
-        self.fields["full_name"].widget.attrs["autocomplete"] = "name"
+        for name, f in self.fields.items():
+            # f.widget.attrs["class"] = "form-check-input" if name == "is_default" else "form-control"
+            if name == "is_default":
+                f.widget.attrs["class"] = "form-check-input"
+            elif name == "state":
+                f.widget.attrs["class"] = "form-select"
+            else:
+                f.widget.attrs["class"] = "form-control"

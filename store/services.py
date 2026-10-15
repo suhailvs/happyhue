@@ -2,8 +2,11 @@
 import logging
 
 import razorpay
+import threading
 from django.conf import settings
-from django.db import transaction
+from django.core.mail import EmailMultiAlternatives
+from django.db import connection, transaction
+from django.template.loader import render_to_string
 from django.utils import timezone
 
 from .models import Product, Order, OrderItem, Payment
@@ -49,6 +52,31 @@ def create_razorpay_order(order):
         order=order, razorpay_order_id=rp["id"], amount=order.total_paise, currency="INR"
     )
 
+def send_order_confirmation(order_pk):
+    order = Order.objects.prefetch_related("items").get(pk=order_pk)
+    if not order.email:
+        return
+    ctx = {"order": order, "items": order.items.all()}
+    msg = EmailMultiAlternatives(
+        subject=f"Order {order.order_number} confirmed",
+        body=render_to_string("emails/order_confirmation.txt", ctx),
+        to=[order.email],
+    )
+    msg.attach_alternative(render_to_string("emails/order_confirmation.html", ctx), "text/html")
+    msg.send()
+
+
+def _notify_paid(order_pk):
+    def run():
+        try:
+            send_order_confirmation(order_pk)
+        except Exception:
+            log.exception("Confirmation email failed for order pk=%s", order_pk)
+        finally:
+            connection.close()  # the thread opened its own DB connection
+
+    threading.Thread(target=run, daemon=True).start()
+
 
 @transaction.atomic
 def mark_paid(payment_id_local, razorpay_payment_id, signature="", method=""):
@@ -70,6 +98,7 @@ def mark_paid(payment_id_local, razorpay_payment_id, signature="", method=""):
         order.paid_at = timezone.now()
         order.save(update_fields=["status", "paid_at"])
         _decrement_stock(order)
+        transaction.on_commit(lambda: _notify_paid(order.pk))
     return True
 
 

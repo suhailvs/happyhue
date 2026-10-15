@@ -123,3 +123,16 @@ SHIPPING_FEE = 99
 
 GOOGLE_CLIENT_ID = config("GOOGLE_CLIENT_ID")
 SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"
+
+MAILERS = {
+    "default": {
+        "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+        "OPTIONS": {
+            "host": "smtp-relay.brevo.com",
+            "port": 587,
+            "use_tls": True,
+            "username": config("BREVO_SMTP_LOGIN"),
+            "password": config("BREVO_SMTP_KEY"),
+        },
+    },
+}
