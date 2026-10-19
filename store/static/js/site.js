@@ -33,8 +33,10 @@
     cartBadge.textContent = count;
     cartBadge.hidden = !count;
     const wishBadge = $('#wishCount');
-    wishBadge.textContent = wishlist.size;
-    wishBadge.hidden = !wishlist.size;
+    if (wishBadge) {
+      wishBadge.textContent = wishlist.size;
+      wishBadge.hidden = !wishlist.size;
+    }
 
     const pct = Math.min(100, (subtotal / FREE_SHIPPING) * 100);
     $('#shipBar').style.width = pct + '%';

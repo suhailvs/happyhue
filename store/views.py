@@ -16,6 +16,17 @@ SORTS = {
     "price_desc": ("Price, high to low", ("-price", "id")),
 }
 
+# Home page banner slides. Images live in store/static/images/.
+BANNERS = [
+    {"img": "images/banner-1.jpg", "title": "Colour for your walls and your studio",
+     "text": "Art materials, handmade pieces and custom framing.", "cta": "Shop art materials", "slug": "art-materials"},
+    {"img": "images/banner-2.jpg", "title": "Original watercolours",
+     "text": "Painted by hand and signed by the artist.", "cta": "View paintings", "slug": "paintings-original"},
+    {"img": "images/banner-3.jpg", "title": "Everything for the first wash",
+     "text": "Paints, brushes and papers from brands we trust.", "cta": "Shop now", "slug": "art-materials"},
+]
+
+
 def home(request):
     sections = {c["slug"]: c for c in get_navigation(request)}
     tabs = [
@@ -29,7 +40,8 @@ def home(request):
         "framing": sections.get("art-framing"),
         "tabs": tabs,
         "why_us": data.WHY_US,
-        "frame_builder": data.FRAME_BUILDER,
+        "quote_sizes": data.QUOTE_SIZES,
+        "banners": [{**b, "url": reverse("store:category", args=[b["slug"]])} for b in BANNERS],
     }
     return render(request, "home.html", context)
 

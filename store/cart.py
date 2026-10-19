@@ -10,37 +10,6 @@ SESSION_KEY = "cart"
 MAX_QTY = 20
 
 
-def _pick(group, key):
-    return next((x for x in data.FRAME_BUILDER[group] if x["key"] == key), None)
-
-
-def clean_framing_options(opts):
-    """Validate framing choices against the builder config. Returns (options, unit_price) or (None, None)."""
-    size, frame = _pick("sizes", opts.get("size")), _pick("frames", opts.get("frame"))
-    width, glazing = _pick("widths", opts.get("width")), _pick("glazing", opts.get("glazing"))
-    mat = _pick("mats", opts.get("mat"))
-    if not (size and frame and width and glazing):
-        return None, None
-    if width["key"] != "none" and not mat:
-        return None, None
-    options = {
-        "size": size["key"], "frame": frame["key"], "width": width["key"], "glazing": glazing["key"],
-        "mat": mat["key"] if width["key"] != "none" and mat else "",
-    }
-    # Keep in sync with the price formula in static/js/home.js.
-    price = Decimal(round(size["base"] * frame["mult"])) + width["add"] + glazing["add"]
-    return options, price
-
-
-def framing_summary(options):
-    parts = [
-        _pick("sizes", options["size"])["label"],
-        _pick("frames", options["frame"])["label"],
-        "no mat" if options["width"] == "none" else f'{_pick("widths", options["width"])["label"].lower()} {_pick("mats", options["mat"])["label"].lower()} mat',
-        _pick("glazing", options["glazing"])["label"].lower(),
-    ]
-    return ", ".join(parts)
-
 
 def shipping_for(subtotal):
     if subtotal <= 0 or subtotal >= data.FREE_SHIPPING_THRESHOLD:
@@ -67,16 +36,6 @@ class Cart:
         self._save()
         return True
 
-    def add_framing(self, options, qty=1):
-        options, price = clean_framing_options(options or {})
-        if not options:
-            return False
-        key = "f-" + "-".join(options[k] or "x" for k in ("size", "frame", "width", "mat", "glazing"))
-        line = self.raw.setdefault(key, {"kind": "framing", "options": options, "qty": 0})
-        line["qty"] = min(line["qty"] + max(qty, 1), MAX_QTY)
-        self._save()
-        return True
-
     def set_qty(self, key, qty):
         if key not in self.raw:
             return
@@ -100,29 +59,17 @@ class Cart:
         products = Product.objects.active().in_bulk(product_ids)
         out, stale = [], []
         for key, l in self.raw.items():
-            if l["kind"] == "product":
-                p = products.get(l["id"])
-                if not p or not p.in_stock:
-                    stale.append(key)
-                    continue
-                qty = min(l["qty"], p.stock, MAX_QTY)
-                out.append({
-                    "key": key, "kind": "product", "product": p, "name": p.name, "by": p.brand,
-                    "icon": p.icon, "colors": p.c, "unit_price": p.price, "qty": qty,
-                    "image": p.main_image.image.url if p.main_image else "", "url": p.get_absolute_url(),
-                    "max_qty": min(p.stock, MAX_QTY), "options": {},
-                })
-            else:
-                options, price = clean_framing_options(l["options"])
-                if not options:
-                    stale.append(key)
-                    continue
-                out.append({
-                    "key": key, "kind": "framing", "product": None, "name": "Custom framing",
-                    "by": framing_summary(options), "icon": "a-frame",
-                    "colors": ["#F1F1EE", data.ULTRAMARINE, data.GOLD], "unit_price": price, "image": "", "url": "",
-                    "qty": l["qty"], "max_qty": MAX_QTY, "options": options,
-                })
+            p = products.get(l["id"]) if l.get("kind") == "product" else None
+            if not p or not p.in_stock:
+                stale.append(key)
+                continue
+            qty = min(l["qty"], p.stock, MAX_QTY)
+            out.append({
+                "key": key, "kind": "product", "product": p, "name": p.name, "by": p.brand,
+                "icon": p.icon, "colors": p.c, "unit_price": p.price, "qty": qty,
+                "image": p.main_image.image.url if p.main_image else "", "url": p.get_absolute_url(),
+                "max_qty": min(p.stock, MAX_QTY), "options": {},
+            })
         for key in stale:
             del self.raw[key]
         if stale:

@@ -18,7 +18,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Instrument+Sans:wght@400..700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
@@ -49,8 +49,7 @@
       </button>
 
       <a class="brand" href="{% url 'store:home' %}" aria-label="{{ store_name }} Art Store, home">
-        <svg viewBox="0 0 34 26" aria-hidden="true"><circle cx="9" cy="13" r="9" fill="#2A3BD0"/><circle cx="17" cy="13" r="9" fill="#E8B02E" opacity=".92"/><circle cx="25" cy="13" r="9" fill="#0F7B63" opacity=".88"/></svg>
-        {{ store_name }}
+        <img src="{% static 'images/logo-navy.png' %}" alt="Happy Hue Arts &amp; Crafts">
       </a>
 
       <!-- <form class="search" role="search" action="{% url 'store:home' %}" method="get">
@@ -91,7 +90,7 @@
     <nav class="d-none d-lg-block" aria-label="Shop categories">
       <div class="container">
         <ul class="nav cats">
-          {% for cat in categories %}
+          <!-- {% for cat in categories %}
           <li class="nav-item">
             <a class="nav-link" href="{{ cat.url }}">{{ cat.name }}</a>
             <div class="mega">
@@ -114,7 +113,7 @@
               </div>
             </div>
           </li>
-          {% endfor %}
+          {% endfor %} -->
           <li class="nav-item ms-auto"><a class="nav-link" href="{% url 'store:home' %}#shop">New arrivals</a></li>
           <li class="nav-item"><a class="nav-link text-sale" href="{% url 'store:home' %}#shop">Sale</a></li>
         </ul>
@@ -160,7 +159,7 @@
     <div class="container">
       <div class="row g-5">
         <div class="col-lg-4">
-          <span class="brand text-white">{{ store_name }}</span>
+          <img class="foot-logo" src="{% static 'images/logo-cream.png' %}" alt="Happy Hue Arts &amp; Crafts">
           <p class="foot-muted mt-3 mb-4">Art materials, handmade pieces and custom framing, shipped across India.</p>
           <!-- <a class="btn btn-light rounded-pill px-4" href="#">Chat on WhatsApp</a> -->
         </div>
@@ -210,8 +209,3 @@
   {% block extra_js %}{% endblock %}
 </body>
 </html>
-
-
-
-
-

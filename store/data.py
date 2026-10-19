@@ -167,35 +167,9 @@ WHY_US = [
 
 # Frame builder: rendered as radio inputs in home.html and sent to
 # static/js/home.js with json_script so prices and preview use the same numbers.
-FRAME_BUILDER = {
-    "sizes": [
-        {"key": "a4", "label": "A4", "w": 210, "h": 297, "base": 1200, "k": 0.74},
-        {"key": "a3", "label": "A3", "w": 297, "h": 420, "base": 1900, "k": 0.82},
-        {"key": "a2", "label": "A2", "w": 420, "h": 594, "base": 3100, "k": 0.92},
-        {"key": "s1216", "label": "12 × 16 in", "w": 12, "h": 16, "base": 2200, "k": 0.80},
-        {"key": "s1824", "label": "18 × 24 in", "w": 18, "h": 24, "base": 3600, "k": 0.95},
-    ],
-    "frames": [
-        {"key": "black", "label": "Matte black", "color": "#1D2030", "mult": 1.0},
-        {"key": "oak", "label": "Natural oak", "color": "#C99A63", "mult": 1.1},
-        {"key": "walnut", "label": "Walnut", "color": "#5B3A29", "mult": 1.15},
-        {"key": "gold", "label": "Antique gold", "color": "#C9A24A", "mult": 1.35},
-        {"key": "white", "label": "White", "color": "#F1F1EE", "mult": 1.0},
-    ],
-    "mats": [
-        {"key": "snow", "label": "Snow white", "color": "#FAFAF7"},
-        {"key": "stone", "label": "Warm stone", "color": "#D8D3C8"},
-        {"key": "sage", "label": "Sage", "color": "#B5C4AF"},
-        {"key": "char", "label": "Charcoal", "color": "#2C303C"},
-    ],
-    "widths": [
-        {"key": "none", "label": "No mat", "px": 0, "add": 0},
-        {"key": "classic", "label": "Classic", "px": 26, "add": 250},
-        {"key": "wide", "label": "Wide", "px": 50, "add": 450},
-    ],
-    "glazing": [
-        {"key": "acrylic", "label": "Acrylic", "note": "light and shatter-resistant", "add": 0},
-        {"key": "glass", "label": "Glass", "note": "", "add": 300},
-    ],
-    "defaults": {"size": "a3", "frame": "oak", "mat": "snow", "width": "classic", "glazing": "acrylic"},
-}
+QUOTE_SIZES = [
+    {"key": "small", "label": "Small (up to A4)"},
+    {"key": "medium", "label": "Medium (up to A3)"},
+    {"key": "large", "label": "Large (A2 and above)"},
+    {"key": "custom", "label": "Custom / not sure"},
+]

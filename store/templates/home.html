@@ -3,212 +3,114 @@
 
 {% block content %}
 
-{# HERO: one panel per top-level category. Hover, focus or tap expands a panel (static/js/home.js). #}
-<section class="hero">
-  <div class="container">
-    <h1 class="hero-title">{% for cat in categories %}<span data-panel="{{ forloop.counter0 }}" style="--u:{{ cat.panel.bg }}">{{ cat.verb }}</span> {% endfor %}</h1>
-    <p class="hero-lede">Artist-grade paints and brushes, handmade pieces from local makers, and custom framing for the work you finish. Free shipping across India on orders over {{ free_shipping_threshold|inr }}.</p>
+<h1 class="visually-hidden">{{ store_name }} Arts &amp; Crafts</h1>
 
-    <div class="panels">
-      {% for cat in categories %}
-      <article class="panel{% if forloop.first %} is-active{% endif %}" tabindex="0" aria-label="{{ cat.name }}"
-               style="--i:{{ forloop.counter0 }};--pc:{{ cat.panel.bg }};--pi:{{ cat.panel.ink }}">
-        <h2>{{ cat.name }}</h2>
-        <div class="panel__more">
-          <p>{{ cat.panel_text }}</p>
-          <ul class="chips list-unstyled">
-            {% for child in cat.children %}<li><a href="{{ child.url }}">{{ child.name }}</a></li>{% endfor %}
-          </ul>
-          <a class="cta" href="{% if cat.cta_href %}{% url 'store:home' %}{{ cat.cta_href }}{% else %}{{ cat.url }}{% endif %}">{{ cat.cta }}</a>
-        </div>
-        <svg class="panel__art" viewBox="0 0 340 340" aria-hidden="true">
-          {% for a in cat.panel_art %}<use href="#{{ a.icon }}" x="{{ a.x }}" y="{{ a.y }}" width="{{ a.size }}" height="{{ a.size }}" style="{{ a.c|css_vars }}"/>{% endfor %}
-        </svg>
-      </article>
-      {% endfor %}
+{# BANNER: Bootstrap carousel, slides come from BANNERS in views.py #}
+<section class="banner" aria-label="Featured">
+  <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" aria-roledescription="carousel">
+    <div class="carousel-indicators">
+      {% for b in banners %}<button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ forloop.counter0 }}"{% if forloop.first %} class="active" aria-current="true"{% endif %} aria-label="Banner {{ forloop.counter }}"></button>{% endfor %}
     </div>
-  </div>
-</section>
-
-{# ART MATERIALS #}
-<section class="section bg-body-tertiary" id="{{ materials.anchor }}">
-  <div class="container">
-    <div class="sec-head">
-      <div><h2>{{ materials.name }}</h2><p>{{ materials.tagline }}</p></div>
-      <a class="more" href="{{ materials.url }}">{{ materials.see_all }}</a>
-    </div>
-    <div class="row row-cols-2 row-cols-lg-4 g-3">
-      {% for child in materials.children %}
-      <div class="col">
-        <a class="tile" href="{{ child.url }}" style="{{ child.c|css_vars }}">
-          <span class="n">{{ child.count_label }}</span>
-          <svg class="art" viewBox="0 0 120 120" aria-hidden="true"><use href="#{{ child.icon }}"/></svg>
-          <h3>{{ child.name }}</h3>
-          <p>{{ child.blurb }}</p>
-        </a>
+    <div class="carousel-inner">
+      {% for b in banners %}
+      <div class="carousel-item{% if forloop.first %} active{% endif %}" data-bs-interval="5500">
+        <img src="{% static b.img %}" alt="{{ b.title }}"{% if not forloop.first %} loading="lazy"{% endif %}>
+        <div class="ov"><div class="container">
+          <h2 class="ov-title">{{ b.title }}</h2>
+          <p>{{ b.text }}</p>
+          <a class="btn btn-primary" href="{{ b.url }}">{{ b.cta }}</a>
+        </div></div>
       </div>
       {% endfor %}
     </div>
   </div>
 </section>
 
-{# HANDMADE: first child is the lead tile #}
-<section class="section" id="{{ handmade.anchor }}">
+{# Three category tiles under the banner #}
+<div class="container cat-tiles">
+  {% for cat in categories %}
+  <a class="cat-tile" href="{{ cat.url }}">
+    <b>{{ cat.name }}</b>
+    <small>{% for child in cat.children %}{{ child.name }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</small>
+  </a>
+  {% endfor %}
+</div>
+
+{# Keep old section anchors alive for links that still point at them #}
+<span id="{{ materials.anchor }}"></span><span id="{{ handmade.anchor }}"></span>
+
+{# FEATURED PIECES: masonry columns. Pass `featured_products` from the view; falls back to the first product tab. #}
+<section class="section" id="shop">
   <div class="container">
     <div class="sec-head">
-      <div><h2>{{ handmade.name }}</h2><p>{{ handmade.tagline }}</p></div>
+      <div><h2>Original paintings</h2></div>
       <a class="more" href="{{ handmade.url }}">{{ handmade.see_all }}</a>
     </div>
-    <div class="row g-3">
-      {% with lead=handmade.children.0 %}
-      <div class="col-lg-6">
-        <a class="tile tile--lead" href="{{ lead.url }}" style="{{ lead.c|css_vars }}">
-          <span class="n">{{ lead.count_label }}</span>
-          <svg class="art" viewBox="0 0 120 120" aria-hidden="true"><use href="#{{ lead.icon }}"/></svg>
-          <h3>{{ lead.name }}</h3>
-          <p>{{ lead.blurb }}</p>
-        </a>
-      </div>
-      {% endwith %}
-      <div class="col-lg-6">
-        <div class="row row-cols-2 g-3">
-          {% for child in handmade.children|slice:"1:" %}
-          <div class="col">
-            <a class="tile tile--sm" href="{{ child.url }}" style="{{ child.c|css_vars }}">
-              <span class="n">{{ child.count_label }}</span>
-              <svg class="art" viewBox="0 0 120 120" aria-hidden="true"><use href="#{{ child.icon }}"/></svg>
-              <h3>{{ child.name }}</h3>
-            </a>
-          </div>
-          {% endfor %}
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-{# PRODUCTS: Bootstrap pills + tab panes, one pane per entry in `tabs` #}
-<section class="section bg-body-tertiary" id="shop">
-  <div class="container">
-    <div class="sec-head">
-      <div><h2>What artists are buying</h2></div>
-      <a class="more" href="#">View all products</a>
-    </div>
-    <ul class="nav nav-pills mb-4" id="productTabs" role="tablist">
-      {% for tab in tabs %}
-      <li class="nav-item" role="presentation">
-        <button class="nav-link{% if forloop.first %} active{% endif %}" id="tab-{{ tab.key }}" type="button" role="tab"
-                data-bs-toggle="pill" data-bs-target="#pane-{{ tab.key }}" aria-controls="pane-{{ tab.key }}"
-                aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">{{ tab.label }}</button>
-      </li>
-      {% endfor %}
-    </ul>
-    <div class="tab-content">
-      {% for tab in tabs %}
-      <div class="tab-pane fade{% if forloop.first %} show active{% endif %}" id="pane-{{ tab.key }}" role="tabpanel" aria-labelledby="tab-{{ tab.key }}" tabindex="0">
-        <div class="row row-cols-2 row-cols-lg-4 g-3 g-lg-4">
-          {% for p in tab.products %}
-          <div class="col">{% include "partials/product_card.html" with p=p %}</div>
-          {% endfor %}
-        </div>
-      </div>
+    <div class="masonry">
+      {% for p in featured_products %}
+      <div>{% include "partials/product_card.html" with p=p %}</div>
+      {% empty %}
+      {% if tabs %}{% for p in tabs.0.products|slice:":8" %}
+      <div>{% include "partials/product_card.html" with p=p %}</div>
+      {% endfor %}{% endif %}
       {% endfor %}
     </div>
   </div>
 </section>
 
-{# CUSTOM FRAMING BUILDER #}
-<section class="section" id="{{ framing.anchor }}">
+{# CUSTOM FRAMING: navy panel, live builder sits in a light card inside it #}
+<section class="section pt-0" id="{{ framing.anchor }}">
   <div class="container">
-    <div class="sec-head">
-      <div><h2>Custom framing, made to measure</h2><p>{{ framing.tagline }}</p></div>
-    </div>
-    {% with fb=frame_builder %}
-    <div class="row g-4 g-lg-5">
-      <div class="col-lg-6">
-        <div class="preview">
-          <svg viewBox="0 0 400 430" role="img" aria-label="Live preview of your custom frame">
-            <rect class="wall" width="400" height="430"/>
-            <rect class="shelf" y="398" width="400" height="32"/>
-            <g id="pv"></g>
-          </svg>
-        </div>
-      </div>
-
-      <div class="col-lg-6">
-        <div class="cfg" id="cfg">
-          <fieldset>
-            <legend>Size <b id="lbSize"></b></legend>
-            <div class="d-flex flex-wrap gap-2">
-              {% for s in fb.sizes %}
-              <input type="radio" class="btn-check" name="size" id="size-{{ s.key }}" value="{{ s.key }}" autocomplete="off"{% if s.key == fb.defaults.size %} checked{% endif %}>
-              <label class="btn btn-chip" for="size-{{ s.key }}">{{ s.label }}</label>
-              {% endfor %}
-            </div>
-          </fieldset>
-
-          <fieldset>
-            <legend>Frame <b id="lbFrame"></b></legend>
-            <div class="d-flex flex-wrap gap-2">
-              {% for f in fb.frames %}
-              <input type="radio" class="btn-check" name="frame" id="frame-{{ f.key }}" value="{{ f.key }}" autocomplete="off"{% if f.key == fb.defaults.frame %} checked{% endif %}>
-              <label class="dot" for="frame-{{ f.key }}" style="--s:{{ f.color }}"><span class="visually-hidden">{{ f.label }}</span></label>
-              {% endfor %}
-            </div>
-          </fieldset>
-
-          <fieldset>
-            <legend>Mat width <b id="lbWidth"></b></legend>
-            <div class="d-flex flex-wrap gap-2">
-              {% for w in fb.widths %}
-              <input type="radio" class="btn-check" name="width" id="width-{{ w.key }}" value="{{ w.key }}" autocomplete="off"{% if w.key == fb.defaults.width %} checked{% endif %}>
-              <label class="btn btn-chip" for="width-{{ w.key }}">{{ w.label }}</label>
-              {% endfor %}
-            </div>
-          </fieldset>
-
-          <fieldset id="matSet">
-            <legend>Mat color <b id="lbMat"></b></legend>
-            <div class="d-flex flex-wrap gap-2">
-              {% for m in fb.mats %}
-              <input type="radio" class="btn-check" name="mat" id="mat-{{ m.key }}" value="{{ m.key }}" autocomplete="off"{% if m.key == fb.defaults.mat %} checked{% endif %}>
-              <label class="dot" for="mat-{{ m.key }}" style="--s:{{ m.color }}"><span class="visually-hidden">{{ m.label }}</span></label>
-              {% endfor %}
-            </div>
-          </fieldset>
-
-          <fieldset>
-            <legend>Glazing <b id="lbGlazing"></b></legend>
-            <div class="d-flex flex-wrap gap-2">
-              {% for g in fb.glazing %}
-              <input type="radio" class="btn-check" name="glazing" id="glazing-{{ g.key }}" value="{{ g.key }}" autocomplete="off"{% if g.key == fb.defaults.glazing %} checked{% endif %}>
-              <label class="btn btn-chip" for="glazing-{{ g.key }}">{{ g.label }}{% if g.note %}, {{ g.note }}{% endif %}</label>
-              {% endfor %}
-            </div>
-          </fieldset>
-
-          <div class="buy">
-            <div>
-              <div class="buy-total" id="framePrice">₹0</div>
-              <small class="d-block text-body-secondary mt-1" id="frameSummary"></small>
-            </div>
-            <button class="btn btn-primary btn-lg rounded-pill px-4" type="button" id="frameAdd">Add framing to cart</button>
-          </div>
-          <ul class="list-unstyled small text-body-secondary mt-3 mb-0">
-            <li>Ready in 5 to 7 days after we receive your artwork.</li>
-            <li>Acid-free mats and UV-filtering glazing on every order.</li>
+    <div class="frame-panel">
+      <div class="frame-intro">
+        <div>
+          <h2>Custom framing, made to fit your art.</h2>
+          <p>{{ framing.tagline }}</p>
+          <ul>
+            <li>Readymade frames</li>
+            <li>Mounts</li>
+            <li>Framing modules</li>
           </ul>
         </div>
+
+        <form class="frame-form" method="post" action="#">
+          {% csrf_token %}
+          <label class="visually-hidden" for="fq-name">Your name</label>
+          <input id="fq-name" name="name" type="text" class="form-control" placeholder="Your name" required>
+
+          <label class="visually-hidden" for="fq-contact">Phone or email</label>
+          <input id="fq-contact" name="contact" type="text" class="form-control" placeholder="Phone or email" required>
+
+          <label class="visually-hidden" for="fq-size">Artwork size</label>
+          <select id="fq-size" name="size" class="form-select">
+            {% for s in quote_sizes %}<option value="{{ s.key }}">{{ s.label }}</option>{% endfor %}
+          </select>
+
+          <label class="visually-hidden" for="fq-notes">About your artwork</label>
+          <textarea id="fq-notes" name="notes" rows="3" class="form-control" placeholder="Tell us about your artwork"></textarea>
+
+          <button type="submit" class="btn btn-light">Request a quote</button>
+        </form>
       </div>
     </div>
-    {% endwith %}
   </div>
 </section>
 
-
+{# ABOUT #}
+<section class="section pt-0" id="about">
+  <div class="container about-grid">
+    {% if banners %}
+    <div class="about-img"><img src="{% static banners.0.img %}" alt="" loading="lazy"></div>
+    {% endif %}
+    <div>
+      <h2>Painted by hand, shipped with care.</h2>
+      <p>{{ store_name }} is a small art studio. Every painting in the shop is an original, painted and signed by the artist. Our materials and framing are chosen for people who love to make things too.</p>
+    </div>
+  </div>
+</section>
 
 {# WHY #}
-<section class="section">
+<section class="section pt-0">
   <div class="container">
     <ul class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4 list-unstyled mb-0">
       {% for w in why_us %}
@@ -218,13 +120,6 @@
   </div>
 </section>
 
-
-{% endblock %}
-
-{% block extra_js %}
-{{ frame_builder|json_script:"frame-builder" }}
-<script src="{% static 'js/home.js' %}?v={{ ASSET_VERSION }}"></script>
 {% endblock %}
 
 
-  
