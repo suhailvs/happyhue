@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
+from django.db.models import Prefetch
 from .models import Category, Product
 from .navigation import get_navigation
 
@@ -39,7 +40,6 @@ def home(request):
         "handmade": sections.get("handmade"),
         "framing": sections.get("art-framing"),
         "tabs": tabs,
-        "why_us": data.WHY_US,
         "quote_sizes": data.QUOTE_SIZES,
         "banners": [{**b, "url": reverse("store:category", args=[b["slug"]])} for b in BANNERS],
     }
@@ -50,8 +50,22 @@ def home(request):
 def category(request, slug):
     category = get_object_or_404(Category.objects.select_related("parent"), slug=slug, is_active=True)
     # Sub-categories show their siblings as pills; top-level categories show their children.
-    pills_root = category.parent or category
-    subcategories = pills_root.children.filter(is_active=True)
+    # Walk up to the top-level category (e.g. Art Materials) so the sidebar
+    # shows the full tree whichever level the visitor is on.
+    root = category
+    while root.parent_id:
+        root = root.parent
+
+    sidebar_groups = (
+        root.children.filter(is_active=True)
+        .prefetch_related(
+            Prefetch(
+                "children",
+                queryset=Category.objects.filter(is_active=True),
+                to_attr="active_children",
+            )
+        )
+    )
 
     sort = request.GET.get("sort", "featured")
     if sort not in SORTS:
@@ -64,14 +78,14 @@ def category(request, slug):
     page_obj = Paginator(products, PAGE_SIZE).get_page(request.GET.get("page"))
 
     # Framing is made to measure, so its category points at the builder instead of a product grid.
-    cta_href = next((c.get("cta_href") for c in data.CATEGORIES if c["slug"] == pills_root.slug), "")
+    cta_href = next((c.get("cta_href") for c in data.CATEGORIES if c["slug"] == root.slug), "")
     context = {
         "category": category,
-        "pills_root": pills_root,
-        "subcategories": subcategories,
+        "pills_root": root,
         "page_obj": page_obj,
         "sort": sort,
         "sorts": [(key, label) for key, (label, _) in SORTS.items()],
         "builder_url": reverse("store:home") + cta_href if cta_href else "",
+        "sidebar_groups": sidebar_groups,
     }
     return render(request, "category.html", context)

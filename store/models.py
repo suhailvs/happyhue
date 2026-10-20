@@ -36,13 +36,22 @@ class Category(models.Model):
     sort_order = models.PositiveSmallIntegerField(default=0)
     is_active = models.BooleanField(default=True)
 
+    def ancestors(self):
+        chain, node = [], self.parent
+        while node:
+            chain.insert(0, node)
+            node = node.parent
+        return chain
+
     class Meta:
         ordering = ["sort_order", "name"]
         verbose_name_plural = "categories"
 
+    # def __str__(self):
+    #     return f"{self.parent.name} / {self.name}" if self.parent_id else self.name
     def __str__(self):
-        return f"{self.parent.name} / {self.name}" if self.parent_id else self.name
-
+        return " › ".join([a.name for a in self.ancestors()] + [self.name])
+    
     def get_absolute_url(self):
         return reverse("store:category", args=[self.slug])
 

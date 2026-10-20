@@ -155,12 +155,6 @@ PRODUCT_TABS = [
 ]
 
 
-WHY_US = [
-    {"title": "Tested by artists", "text": "If it is on the shelf, someone on our team has painted with it.", "color": ULTRAMARINE},
-    {"title": "Packed for the post", "text": "Glass tubes, palettes and frames are wrapped the way artists wish every store did.", "color": GOLD},
-    {"title": "Made by local hands", "text": "Handmade pieces come straight from the people who made them, with their names on the listing.", "color": ROSE},
-    {"title": "Real answers", "text": "Ask about a paper’s sizing or a pigment’s lightfastness and a person replies.", "color": VIRIDIAN},
-]
 
 
 # HELP_LINKS = ["Track order", "Shipping and returns", "Learning center", "Contact"]

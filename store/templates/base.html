@@ -33,11 +33,6 @@
   <div class="announce">
     <div class="container d-flex justify-content-between align-items-center gap-3 py-2">
       <p class="mb-0">Free shipping on orders over {{ free_shipping_threshold|inr }} across India</p>
-      <nav class="d-none d-md-flex gap-4" aria-label="Utility">
-        <a href="#">Track order</a>
-        <a href="#">Contact</a>
-        <a href="#">₹ INR</a>
-      </nav>
     </div>
   </div>
 
@@ -51,7 +46,33 @@
       <a class="brand" href="{% url 'store:home' %}" aria-label="{{ store_name }} Art Store, home">
         <img src="{% static 'images/logo-navy.png' %}" alt="Happy Hue Arts &amp; Crafts">
       </a>
-
+      <nav class="cats-nav d-none d-lg-block flex-grow-1" aria-label="Shop categories">
+        <ul class="nav cats justify-content-center">
+          {% for cat in categories %}
+          <li class="nav-item has-dd">
+            <a class="nav-link" href="{{ cat.url }}"{% if request.path == cat.url %} aria-current="page"{% endif %} aria-haspopup="true">{{ cat.name }}</a>
+            {% if cat.children %}
+            <div class="dd{% if cat.children.0.children %} dd--mega{% endif %}">
+              {% for child in cat.children %}
+              {% if child.children %}
+              <div class="dd__col">
+                <h4><a href="{{ child.url }}">{{ child.name }}</a></h4>
+                {% for sub in child.children %}<a href="{{ sub.url }}">{{ sub.name }}</a>{% endfor %}
+              </div>
+              {% else %}
+              {% if forloop.first %}<div class="dd__col">{% endif %}
+                <a href="{{ child.url }}">{{ child.name }}</a>
+              {% if forloop.last %}</div>{% endif %}
+              {% endif %}
+              {% endfor %}
+            </div>
+            {% endif %}
+          </li>
+          {% endfor %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'store:home' %}#about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'store:home' %}#contact">Contact</a></li>
+        </ul>
+      </nav>
       <!-- <form class="search" role="search" action="{% url 'store:home' %}" method="get">
         <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#u-search"/></svg>
         <label class="visually-hidden" for="q">Search the store</label>
@@ -87,38 +108,6 @@
       </div>
     </div>
 
-    <nav class="d-none d-lg-block" aria-label="Shop categories">
-      <div class="container">
-        <ul class="nav cats">
-          <!-- {% for cat in categories %}
-          <li class="nav-item">
-            <a class="nav-link" href="{{ cat.url }}">{{ cat.name }}</a>
-            <div class="mega">
-              <div class="container">
-                <div class="row g-4">
-                  {% for child in cat.children %}
-                  <div class="{% if cat.children|length == 1 %}col-lg-4{% else %}col{% endif %}">
-                    <a class="mlink" href="{{ child.url }}"><b>{{ child.name }}</b><span>{{ child.menu_blurb|default:child.blurb }}</span></a>
-                  </div>
-                  {% endfor %}
-                  {% if cat.promo %}
-                  <div class="{% if cat.children|length == 1 %}col-lg-8{% else %}col-lg-3{% endif %}">
-                    <a class="promo" href="{% url 'store:home' %}{{ cat.promo.href }}" style="--pbg:{{ cat.promo.bg }}">
-                      <svg viewBox="0 0 120 120" aria-hidden="true" style="{{ cat.promo.c|css_vars }}"><use href="#{{ cat.promo.icon }}"/></svg>
-                      <b>{{ cat.promo.title }}</b><span>{{ cat.promo.link }}</span>
-                    </a>
-                  </div>
-                  {% endif %}
-                </div>
-              </div>
-            </div>
-          </li>
-          {% endfor %} -->
-          <li class="nav-item ms-auto"><a class="nav-link" href="{% url 'store:home' %}#shop">New arrivals</a></li>
-          <li class="nav-item"><a class="nav-link text-sale" href="{% url 'store:home' %}#shop">Sale</a></li>
-        </ul>
-      </div>
-    </nav>
   </header>
 
   {# Mobile menu: Bootstrap offcanvas + accordion #}
@@ -156,26 +145,17 @@
   </main>
 
   <footer class="foot">
-    <div class="container">
-      <div class="row g-5">
-        <div class="col-lg-4">
-          <img class="foot-logo" src="{% static 'images/logo-cream.png' %}" alt="Happy Hue Arts &amp; Crafts">
-          <p class="foot-muted mt-3 mb-4">Art materials, handmade pieces and custom framing, shipped across India.</p>
-          <!-- <a class="btn btn-light rounded-pill px-4" href="#">Chat on WhatsApp</a> -->
-        </div>
-        {% for cat in categories %}
-        <div class="col-6 col-lg-2">
-          <h3 class="h6 mb-3"><a href="{{ cat.url }}">{{ cat.name }}</a></h3>
-          <ul class="list-unstyled mb-0">
-            {% for child in cat.children %}<li class="mb-2"><a href="{{ child.url }}">{{ child.name }}</a></li>{% endfor %}
-          </ul>
-        </div>
-        {% endfor %}
+    <div class="container foot-row">
+      <a href="{% url 'store:home' %}" class="foot-brand">
+        <img class="foot-logo" src="{% static 'images/logo-cream.png' %}" alt="Happy Hue Arts &amp; Crafts">
+      </a>
+      <div class="foot-contact">
         
+        <p class="mb-0">
+          <a href="#">Instagram</a> · <a href="#">Facebook</a> · <a href="#">WhatsApp</a>
+        </p>
       </div>
-      <div class="foot-legal d-flex flex-wrap justify-content-between gap-2">
-        <span>© {% now "Y" %} {{ store_name }} Art Store. All rights reserved.</span>
-      </div>
+      <span class="foot-copy">© {% now "Y" %} {{ store_name }}</span>
     </div>
   </footer>
 
