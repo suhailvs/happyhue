@@ -22,7 +22,7 @@
       <div class="d-flex justify-content-between gap-3">
         <div>
           <b>{{ order.order_number }}</b>
-          <span class="badge text-bg-light border ms-2">{{ order.get_status_display }}</span>
+          <span class="badge bg-body-tertiary text-body border ms-2">{{ order.get_status_display }}</span>
           <div class="small text-body-secondary mt-1">{{ order.created_at|date:"j M Y" }}</div>
         </div>
         <b>{{ order.total|inr }}</b>
