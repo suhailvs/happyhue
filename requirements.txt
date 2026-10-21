@@ -6,3 +6,4 @@ google-auth==2.60.0
 requests==2.34.2
 python-decouple==3.8
 pillow==12.3.0
+sorl-thumbnail==12.11.0

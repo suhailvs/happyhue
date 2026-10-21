@@ -1,8 +1,8 @@
-{% load store_extras l10n %}
+{% load store_extras l10n thumbnail %}
 {# Expects `p`, a Product. #}
 <article class="pcard" style="{{ p.c|css_vars }}">
   <div class="pcard-img" style="position:relative;overflow:hidden">
-    {% with img=p.main_image %}{% if img %}<a href="{{ p.get_absolute_url }}" tabindex="-1" aria-hidden="true"><img src="{{ img.image.url }}" alt="" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></a>{% endif %}{% endwith %}
+    {% with img=p.main_image %}{% if img %}{% thumbnail img.image "600x600" crop="center" as thumb %}<a href="{{ p.get_absolute_url }}" tabindex="-1" aria-hidden="true"><img src="{{ thumb.url }}" alt="" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></a>{% endthumbnail %}{% endif %}{% endwith %}
     {% if p.badge %}<span class="badge pcard-badge{% if p.badge == 'Sale' %} pcard-badge--sale{% endif %}">{{ p.badge }}</span>{% endif %}
     <button class="wish" type="button" data-wish="{{ p.id }}" aria-pressed="false" aria-label="Save {{ p.name }} to wishlist">
       <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#u-heart"/></svg>
