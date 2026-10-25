@@ -101,7 +101,6 @@
         {% else %}
         <a class="icon-btn" href="{% url 'accounts:login' %}{% if request.resolver_match.view_name != 'accounts:login' %}?next={{ request.get_full_path|urlencode }}{% endif %}" aria-label="Sign in"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#u-user"/></svg></a>
         {% endif %}
-        <!-- <a class="icon-btn" href="#" aria-label="Wishlist"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#u-heart"/></svg><span class="count" id="wishCount" hidden>0</span></a> -->
         <button class="icon-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartDrawer" aria-controls="cartDrawer" aria-label="Open cart">
           <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#u-bag"/></svg><span class="count" id="cartCount" hidden>0</span>
         </button>
@@ -110,7 +109,7 @@
 
   </header>
 
-  {# Mobile menu: Bootstrap offcanvas + accordion #}
+  {# Mobile menu: Bootstrap offcanvas + accordion. Links must NOT have data-bs-dismiss, or Bootstrap blocks navigation. #}
   <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileNav" aria-labelledby="mobileNavLabel">
     <div class="offcanvas-header">
       <span class="brand" id="mobileNavLabel">{{ store_name }}</span>
@@ -126,16 +125,16 @@
           </h2>
           <div id="m-{{ cat.slug }}" class="accordion-collapse collapse{% if forloop.first %} show{% endif %}" data-bs-parent="#mobileAccordion">
             <div class="accordion-body pt-0">
-              {% for child in cat.children %}<a class="d-block py-2" href="{{ child.url }}" data-bs-dismiss="offcanvas">
-                {{ child.name }}</a>{% endfor %}
+              <a class="d-block py-2 fw-semibold" href="{{ cat.url }}">All {{ cat.name }}</a>
+              {% for child in cat.children %}<a class="d-block py-2" href="{{ child.url }}">{{ child.name }}</a>{% endfor %}
             </div>
           </div>
         </div>
         {% endfor %}
       </div>
-      <a class="mobile-link" href="{% url 'store:home' %}#shop" data-bs-dismiss="offcanvas">New arrivals</a>
-      <a class="mobile-link" href="{% url 'store:home' %}#learn" data-bs-dismiss="offcanvas">Learn</a>
-      <a class="mobile-link text-sale" href="{% url 'store:home' %}#shop" data-bs-dismiss="offcanvas">Sale</a>
+      <a class="mobile-link" href="{% url 'store:home' %}#shop">New arrivals</a>
+      <a class="mobile-link" href="{% url 'store:home' %}#learn">Learn</a>
+      <a class="mobile-link text-sale" href="{% url 'store:home' %}#shop">Sale</a>
       <a class="mobile-link" href="{% if user.is_authenticated %}{% url 'accounts:orders' %}{% else %}{% url 'accounts:login' %}{% endif %}">{% if user.is_authenticated %}My orders{% else %}Sign in{% endif %}</a>
     </div>
   </div>
@@ -159,7 +158,7 @@
     </div>
   </footer>
 
-  {# Cart drawer: Bootstrap offcanvas, filled by static/js/site.js #}
+  {# Cart drawer: Bootstrap offcanvas, filled by static/js/cart.js #}
   <div class="offcanvas offcanvas-end" tabindex="-1" id="cartDrawer" aria-labelledby="cartDrawerLabel"
        data-url-cart="{% url 'store:cart' %}" data-url-add="{% url 'store:cart_add' %}"
        data-url-update="{% url 'store:cart_update' %}" data-url-remove="{% url 'store:cart_remove' %}">
@@ -184,8 +183,29 @@
   {{ free_shipping_threshold|json_script:"free-shipping" }}
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
           integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-  <script src="{% static 'js/site.js' %}?v={{ ASSET_VERSION }}"></script>
   <script src="{% static 'js/cart.js' %}?v={{ ASSET_VERSION }}"></script>
+
+  {# Mobile menu: same-page anchor links (e.g. #shop on the home page) don't reload, so close the menu first, then jump. #}
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const nav = document.getElementById('mobileNav');
+      if (!nav) return;
+      nav.addEventListener('click', (e) => {
+        const a = e.target.closest('a[href]');
+        if (!a) return;
+        const url = new URL(a.href, location.href);
+        const samePage = url.pathname === location.pathname && url.hash;
+        if (!samePage) return; // normal navigation, let the browser handle it
+
+        e.preventDefault();
+        nav.addEventListener('hidden.bs.offcanvas', () => {
+          location.hash = url.hash;
+        }, { once: true });
+        bootstrap.Offcanvas.getInstance(nav).hide();
+      });
+    });
+  </script>
+
   {% block extra_js %}{% endblock %}
 </body>
 </html>

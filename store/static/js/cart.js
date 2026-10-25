@@ -1,5 +1,5 @@
 // Server-backed cart. Fills the #cartDrawer markup in base.html and handles every [data-add] button.
-// Load this INSTEAD of the cart code in site.js (keep the wishlist and other parts of site.js).
+// Server-backed cart, stored in the Django session.
 (() => {
   const $ = (id) => document.getElementById(id);
   const drawer = $('cartDrawer');
