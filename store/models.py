@@ -6,6 +6,7 @@ from decimal import Decimal
 from django.conf import settings
 from django.utils import timezone
 from django.utils.crypto import get_random_string
+from .image_utils import optimize_image
 
 MAX_IMAGE_BYTES = 5 * 1024 * 1024
 def split_colors(value):
@@ -186,6 +187,14 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return f"{self.product.name} image {self.pk}"
+    
+    def save(self, *args, **kwargs):
+        # _committed is False only when a NEW file was just uploaded,
+        # so existing images are not re-processed on every save
+        if self.image and not self.image._committed:
+            name, content = optimize_image(self.image, max_size=(1600, 1600), quality=80)
+            self.image.save(name, content, save=False)
+        super().save(*args, **kwargs)
 
 
 class Banner(models.Model):
@@ -207,7 +216,14 @@ class Banner(models.Model):
     def __str__(self):
         return self.title
 
-
+    def save(self, *args, **kwargs):
+        # _committed is False only when a NEW file was just uploaded,
+        # so existing images are not re-processed on every save
+        if self.image and not self.image._committed:
+            name, content = optimize_image(self.image, max_size=(1600, 1600), quality=80)
+            self.image.save(name, content, save=False)
+        super().save(*args, **kwargs)
+        
 class Address(models.Model):
     """A saved delivery address. Each user can have many, one of them the default."""
 
