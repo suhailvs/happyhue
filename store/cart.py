@@ -1,10 +1,7 @@
 """Session-backed cart. Prices always come from the database or data.FRAME_BUILDER, never from the browser."""
 from decimal import Decimal
 
-from django.conf import settings
-
-from . import data
-from .models import Product
+from .models import GeneralSettings, Product
 
 SESSION_KEY = "cart"
 MAX_QTY = 20
@@ -12,9 +9,10 @@ MAX_QTY = 20
 
 
 def shipping_for(subtotal):
-    if subtotal <= 0 or subtotal >= data.FREE_SHIPPING_THRESHOLD:
+    threshold = Decimal(GeneralSettings.get_value("free_shipping_threshold", "1999"))
+    if subtotal <= 0 or subtotal >= threshold:
         return Decimal("0")
-    return Decimal(getattr(settings, "SHIPPING_FEE", 99))
+    return Decimal(GeneralSettings.get_value("shipping_fee", "1"))
 
 
 class Cart:
@@ -92,7 +90,7 @@ class Cart:
 
     def as_json(self):
         s = self.summary()
-        threshold = Decimal(data.FREE_SHIPPING_THRESHOLD)
+        threshold = Decimal(GeneralSettings.get_value("free_shipping_threshold", "1999"))
         return {
             "count": s["count"],
             "subtotal": float(s["subtotal"]),

@@ -120,9 +120,6 @@ MAILERS = {
 RAZORPAY_KEY_ID = config("RAZORPAY_KEY_ID") #os.environ[""]
 RAZORPAY_KEY_SECRET = config("RAZORPAY_KEY_SECRET") #os.environ[""]
 RAZORPAY_WEBHOOK_SECRET = config("RAZORPAY_WEBHOOK_SECRET") #os.environ[""]
-SHIPPING_FEE = 1 
-
-
 GOOGLE_CLIENT_ID = config("GOOGLE_CLIENT_ID")
 SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"
 

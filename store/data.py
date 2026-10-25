@@ -10,7 +10,6 @@ illustrations through the `css_vars` template filter.
 """
 
 STORE_NAME = "Happyhue"
-FREE_SHIPPING_THRESHOLD = 1999
 
 ULTRAMARINE = "#2A3BD0"
 GOLD = "#E8B02E"

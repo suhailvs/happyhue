@@ -1,6 +1,7 @@
 from . import data
 
 from .navigation import get_navigation
+from .models import GeneralSettings
 from django.conf import settings
 
 
@@ -12,6 +13,6 @@ def storefront(request):
     return {
         "store_name": data.STORE_NAME,
         "categories": get_navigation(request),
-        "free_shipping_threshold": data.FREE_SHIPPING_THRESHOLD,
+        "free_shipping_threshold": GeneralSettings.get_value("free_shipping_threshold", "1999"),
         # "help_links": data.HELP_LINKS,
     }

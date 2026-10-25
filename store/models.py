@@ -11,6 +11,21 @@ MAX_IMAGE_BYTES = 5 * 1024 * 1024
 def split_colors(value):
     return [c.strip() for c in value.split(",") if c.strip()]
 
+class GeneralSettings(models.Model):
+    key = models.CharField(max_length=50, unique=True)
+    value = models.CharField(max_length=250)
+
+    class Meta:
+        ordering = ["key"]
+
+    def __str__(self) -> str:
+        return f"{self.id}: {self.key}:{self.value}"
+
+    @classmethod
+    def get_value(cls, key, default):
+        setting, _ = cls.objects.get_or_create(key=key, defaults={"value": str(default)})
+        return setting.value
+
 
 class Category(models.Model):
     """A top-level category (Art materials, Handmade, Art framing) or a sub-category."""
@@ -171,6 +186,26 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return f"{self.product.name} image {self.pk}"
+
+
+class Banner(models.Model):
+    """An editable image and message shown in the homepage carousel."""
+
+    image = models.ImageField(upload_to="banners/%Y/%m/", validators=[validate_image_size])
+    title = models.CharField(max_length=160)
+    text = models.CharField(max_length=300, blank=True)
+    cta = models.CharField(max_length=60, default="Shop now")
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="banners")
+    sort_order = models.PositiveSmallIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["sort_order", "id"]
+        verbose_name = "homepage banner"
+        verbose_name_plural = "homepage banners"
+
+    def __str__(self):
+        return self.title
 
 
 class Address(models.Model):

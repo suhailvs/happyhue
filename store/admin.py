@@ -4,7 +4,7 @@ from django.contrib import admin, messages
 from django.http import HttpResponse
 from django.utils.html import format_html
 
-from .models import Category, Product,ProductImage, Order, OrderItem, Payment
+from .models import Banner, Category, GeneralSettings, Product,ProductImage, Order, OrderItem, Payment
 
 STATUS_COLORS = {
     "pending": "#8a6d00", "paid": "#0f7b63", "failed": "#c8445f", "cancelled": "#6b7280",
@@ -28,6 +28,27 @@ class ProductImageInline(admin.TabularInline):
     @admin.display(description="Preview")
     def preview(self, obj):
         return _thumb(obj.image, 72) if obj.pk else "-"
+
+
+@admin.register(Banner)
+class BannerAdmin(admin.ModelAdmin):
+    list_display = ("preview", "title", "category", "sort_order", "is_active")
+    list_display_links = ("preview", "title")
+    list_editable = ("sort_order", "is_active")
+    list_filter = ("is_active", "category")
+    search_fields = ("title", "text")
+    fields = ("image", "title", "text", "cta", "category", "sort_order", "is_active")
+
+    @admin.display(description="Image")
+    def preview(self, obj):
+        return _thumb(obj.image, 72)
+
+
+@admin.register(GeneralSettings)
+class GeneralSettingsAdmin(admin.ModelAdmin):
+    list_display = ("key", "value")
+    list_editable = ("value",)
+    search_fields = ("key",)
 
 
 @admin.register(Category)

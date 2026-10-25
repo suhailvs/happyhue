@@ -1,11 +1,12 @@
 {% extends "base.html" %}
-{% load static store_extras %}
+{% load store_extras %}
 
 {% block content %}
 
 <h1 class="visually-hidden">{{ store_name }} Arts &amp; Crafts</h1>
 
-{# BANNER: Bootstrap carousel, slides come from BANNERS in views.py #}
+{# Homepage carousel slides are managed in the Django admin. #}
+{% if banners %}
 <section class="banner" aria-label="Featured">
   <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" aria-roledescription="carousel">
     <div class="carousel-indicators">
@@ -14,17 +15,18 @@
     <div class="carousel-inner">
       {% for b in banners %}
       <div class="carousel-item{% if forloop.first %} active{% endif %}" data-bs-interval="5500">
-        <img src="{% static b.img %}" alt="{{ b.title }}"{% if not forloop.first %} loading="lazy"{% endif %}>
+        <img src="{{ b.image.url }}" alt="{{ b.title }}"{% if not forloop.first %} loading="lazy"{% endif %}>
         <div class="ov"><div class="container">
           <h2 class="ov-title">{{ b.title }}</h2>
           <p>{{ b.text }}</p>
-          <a class="btn btn-primary" href="{{ b.url }}">{{ b.cta }}</a>
+          <a class="btn btn-primary" href="{{ b.category.get_absolute_url }}">{{ b.cta }}</a>
         </div></div>
       </div>
       {% endfor %}
     </div>
   </div>
 </section>
+{% endif %}
 
 {# Three category tiles under the banner #}
 <div class="container cat-tiles">
@@ -100,7 +102,7 @@
 <section class="section pt-0" id="about">
   <div class="container about-grid">
     {% if banners %}
-    <div class="about-img"><img src="{% static banners.0.img %}" alt="" loading="lazy"></div>
+    <div class="about-img"><img src="{{ banners.0.image.url }}" alt="" loading="lazy"></div>
     {% endif %}
     <div>
       <h2>Painted by hand, shipped with care.</h2>

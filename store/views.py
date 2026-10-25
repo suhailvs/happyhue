@@ -2,7 +2,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.db.models import Prefetch
-from .models import Category, Product
+from .models import Banner, Category, Product
 from .navigation import get_navigation
 
 from . import data
@@ -17,17 +17,6 @@ SORTS = {
     "price_desc": ("Price, high to low", ("-price", "id")),
 }
 
-# Home page banner slides. Images live in store/static/images/.
-BANNERS = [
-    {"img": "images/banner-1.jpg", "title": "Colour for your walls and your studio",
-     "text": "Art materials, handmade pieces and custom framing.", "cta": "Shop art materials", "slug": "art-materials"},
-    {"img": "images/banner-2.jpg", "title": "Original watercolours",
-     "text": "Painted by hand and signed by the artist.", "cta": "View paintings", "slug": "paintings-original"},
-    {"img": "images/banner-3.jpg", "title": "Everything for the first wash",
-     "text": "Paints, brushes and papers from brands we trust.", "cta": "Shop now", "slug": "art-materials"},
-]
-
-
 def home(request):
     sections = {c["slug"]: c for c in get_navigation(request)}
     tabs = [
@@ -41,7 +30,7 @@ def home(request):
         "framing": sections.get("art-framing"),
         "tabs": tabs,
         "quote_sizes": data.QUOTE_SIZES,
-        "banners": [{**b, "url": reverse("store:category", args=[b["slug"]])} for b in BANNERS],
+        "banners": Banner.objects.filter(is_active=True).select_related("category"),
     }
     return render(request, "home.html", context)
 
