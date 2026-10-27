@@ -347,3 +347,22 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"{self.razorpay_order_id} ({self.status})"
+
+class FramingQuote(models.Model):
+    class Status(models.TextChoices):
+        NEW = "new", "New"
+        CONTACTED = "contacted", "Contacted"
+        DONE = "done", "Done"
+
+    name = models.CharField(max_length=120)
+    contact = models.CharField("Phone or email", max_length=160)
+    size = models.CharField(max_length=40)
+    notes = models.TextField(blank=True)
+    status = models.CharField(max_length=12, choices=Status.choices, default=Status.NEW)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.name} ({self.contact})"

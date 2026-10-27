@@ -1,6 +1,9 @@
 from django.core.paginator import Paginator
-from django.shortcuts import get_object_or_404, render
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.views.decorators.http import require_POST
+from .forms import FramingQuoteForm
 from django.db.models import Prefetch
 from .models import Banner, Category, Product
 from .navigation import get_navigation
@@ -78,3 +81,13 @@ def category(request, slug):
         "sidebar_groups": sidebar_groups,
     }
     return render(request, "category.html", context)
+
+@require_POST
+def framing_quote(request):
+    form = FramingQuoteForm(request.POST)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Thanks! We have your request and will contact you soon.")
+    else:
+        messages.error(request, "Please fill in your name and phone or email.")
+    return redirect(reverse("store:home") + "#framing")

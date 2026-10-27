@@ -61,6 +61,9 @@
 </section>
 
 {# CUSTOM FRAMING: navy panel, live builder sits in a light card inside it #}
+{% if messages %}{% for m in messages %}
+<div class="alert alert-{% if m.tags == 'error' %}danger{% else %}success{% endif %} py-2 mb-3" role="status">{{ m }}</div>
+{% endfor %}{% endif %}
 <section class="section pt-0" id="{{ framing.anchor }}">
   <div class="container">
     <div class="frame-panel">
@@ -75,7 +78,7 @@
           </ul>
         </div>
 
-        <form class="frame-form" method="post" action="#">
+        <form class="frame-form" method="post" action="{% url 'store:framing_quote' %}">
           {% csrf_token %}
           <label class="visually-hidden" for="fq-name">Your name</label>
           <input id="fq-name" name="name" type="text" class="form-control" placeholder="Your name" required>

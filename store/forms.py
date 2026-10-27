@@ -1,6 +1,6 @@
 from django import forms
 from django.core.validators import RegexValidator
-from .models import Address
+from .models import Address, FramingQuote
 
 INDIAN_STATES = [
     "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana",
@@ -30,3 +30,9 @@ class AddressForm(forms.ModelForm):
                 f.widget.attrs["class"] = "form-select"
             else:
                 f.widget.attrs["class"] = "form-control"
+
+
+class FramingQuoteForm(forms.ModelForm):
+    class Meta:
+        model = FramingQuote
+        fields = ["name", "contact", "size", "notes"]

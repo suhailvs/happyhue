@@ -4,7 +4,7 @@ from django.contrib import admin, messages
 from django.http import HttpResponse
 from django.utils.html import format_html
 
-from .models import Banner, Category, GeneralSettings, Product,ProductImage, Order, OrderItem, Payment
+from .models import Banner, Category, GeneralSettings, Product,ProductImage, Order, OrderItem, Payment, FramingQuote
 
 STATUS_COLORS = {
     "pending": "#8a6d00", "paid": "#0f7b63", "failed": "#c8445f", "cancelled": "#6b7280",
@@ -198,3 +198,10 @@ class PaymentAdmin(admin.ModelAdmin):
     @admin.display(description="Amount")
     def amount_rupees(self, obj):
         return f"₹{obj.amount / 100:,.2f}"
+
+@admin.register(FramingQuote)
+class FramingQuoteAdmin(admin.ModelAdmin):
+    list_display = ("name", "contact", "size", "status", "created_at")
+    list_filter = ("status",)
+    search_fields = ("name", "contact", "notes")
+    list_editable = ("status",)

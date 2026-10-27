@@ -21,6 +21,7 @@ urlpatterns = [
     path("addresses/<int:pk>/delete/", views_addresses.address_delete, name="address_delete"),
     path("addresses/<int:pk>/default/", views_addresses.address_default, name="address_default"),
 
+    path("framing/quote/", views.framing_quote, name="framing_quote"),
     # Checkout and Razorpay
     path("checkout/", views_checkout.checkout, name="checkout"),
     path("checkout/create/", views_checkout.checkout_create, name="checkout_create"),
