@@ -91,3 +91,25 @@ def framing_quote(request):
     else:
         messages.error(request, "Please fill in your name and phone or email.")
     return redirect(reverse("store:home") + "#framing")
+
+# pressman ajax
+import json
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+@csrf_exempt
+def ajax_pressman_lat_lng(request):
+    import requests
+    data = json.loads(request.body)
+    url = data.get("url", "").strip()
+    print(url,'url')
+    if url:
+        try:
+            resp = requests.head(url, allow_redirects=True, timeout=5)
+            url = resp.url
+        except requests.RequestException:
+            try:
+                resp = requests.get(url, allow_redirects=True, timeout=5)
+                url = resp.url
+            except requests.RequestException:
+                pass
+    return JsonResponse({"url":url})

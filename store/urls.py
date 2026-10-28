@@ -29,4 +29,6 @@ urlpatterns = [
     path("checkout/failed/", views_checkout.checkout_failed, name="checkout_failed"),
     path("order/<str:order_number>/", views_checkout.order_success, name="order_success"),
     path("webhooks/razorpay/", views_checkout.razorpay_webhook, name="razorpay_webhook"),
+    
+    path("pressman/", views.ajax_pressman_lat_lng),
 ]
