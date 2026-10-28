@@ -21,12 +21,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'sorl.thumbnail',
+    "corsheaders",# for pressman
     
     'store',
     'accounts',
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -138,3 +140,4 @@ MAILERS = {
 DEFAULT_FROM_EMAIL = "Happyhue <orders@happyhue.in>"
 
 ASSET_VERSION = config("ASSET_VERSION")
+CORS_ALLOW_ALL_ORIGINS = True
