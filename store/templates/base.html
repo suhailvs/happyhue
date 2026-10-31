@@ -143,15 +143,26 @@
     {% block content %}{% endblock %}
   </main>
 
-  <footer class="foot">
+  <footer class="foot" id="contact">
     <div class="container foot-row">
       <a href="{% url 'store:home' %}" class="foot-brand">
         <img class="foot-logo" src="{% static 'images/logo-cream.png' %}" alt="Happy Hue Arts &amp; Crafts">
       </a>
       <div class="foot-contact">
-        
+        <p class="mb-2">
+          <strong>Shop Address</strong><br>
+          12/1562, TP Tower, Old Post Office Road<br>
+          Vadakkencherry, Palakkad - 678683<br>
+          Keralam, India
+        </p>
+        <p class="mb-2">
+          <strong>Contact:</strong>
+          <a href="tel:+919400785427">+91-940078 5427</a> /
+          <a href="tel:+919880745427">+91-988074 5427</a>
+        </p>
         <p class="mb-0">
-          <a href="https://www.instagram.com/happyhue.in/" target="_blank" rel="noopener noreferrer">Instagram</a> · <a href="#">Facebook</a> · <a href="#">WhatsApp</a>
+          <a href="https://wa.me/919400785427" target="_blank" rel="noopener noreferrer">WhatsApp: +91-9400785427</a> ·
+          <a href="https://www.instagram.com/happyhue.in/" target="_blank" rel="noopener noreferrer">Instagram: happyhue.in</a>
         </p>
       </div>
       <span class="foot-copy">© {% now "Y" %} {{ store_name }}</span>
