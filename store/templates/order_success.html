@@ -23,6 +23,9 @@
         </li>
         {% endfor %}
       </ul>
+      {% if order.discount_amount %}
+      <div class="d-flex justify-content-between text-success"><span>Discount</span><span>- {{ order.discount_amount|inr }}</span></div>
+      {% endif %}
       <div class="d-flex justify-content-between"><span>Shipping</span><span>{% if order.shipping_fee %}{{ order.shipping_fee|inr }}{% else %}Free{% endif %}</span></div>
       <div class="d-flex justify-content-between fw-bold fs-5"><span>Total</span><span>{{ order.total|inr }}</span></div>
       <hr>

@@ -73,11 +73,11 @@
           <li class="nav-item"><a class="nav-link" href="{% url 'store:home' %}#contact">Contact</a></li>
         </ul>
       </nav>
-      <!-- <form class="search" role="search" action="{% url 'store:home' %}" method="get">
+      <form class="search" role="search" action="{% url 'store:home' %}" method="get">
         <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#u-search"/></svg>
         <label class="visually-hidden" for="q">Search the store</label>
-        <input id="q" name="q" type="search" class="form-control" placeholder="Search paints, brushes, sketchbooks" autocomplete="off">
-      </form> -->
+        <input id="q" name="q" type="search" class="form-control" placeholder="Search paintings, paints, brushes" value="{{ q|default:'' }}" autocomplete="off">
+      </form>
 
       <div class="ms-auto d-flex gap-1">
         {% if user.is_authenticated %}

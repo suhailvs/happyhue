@@ -13,7 +13,7 @@ from django.views.decorators.http import require_POST
 from . import services
 from .cart import Cart
 
-from .models import Order, Payment
+from .models import GeneralSettings, Order, Payment
 
 log = logging.getLogger(__name__)
 
@@ -36,11 +36,14 @@ def _fill_profile(user, cleaned):
     if updates:
         user.save(update_fields=updates)
 
+def _with_discount(summary):
+    discount = GeneralSettings.discount_for(summary["subtotal"])
+    return {**summary, "discount": discount, "total": summary["total"] - discount}
 
 @login_required
 def checkout(request):
     cart = Cart(request)
-    summary = cart.summary()
+    summary = _with_discount(cart.summary())
     if not summary["lines"]:
         return redirect("store:home")
     addresses = list(request.user.addresses.all())  # default address sorts first
@@ -73,6 +76,10 @@ def checkout_create(request):
     order = services.create_order_from_cart(Cart(request), cleaned, user=request.user)
     if order is None:
         return JsonResponse({"ok": False, "message": "Your cart is empty."}, status=400)
+    order.discount_amount = GeneralSettings.discount_for(order.subtotal)
+    order.total = order.subtotal - order.discount_amount + order.shipping_fee
+    order.save(update_fields=["discount_amount", "total"])
+    
     _fill_profile(request.user, cleaned)
 
     try:

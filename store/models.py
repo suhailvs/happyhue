@@ -2,7 +2,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.utils.text import slugify
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from django.conf import settings
 from django.utils import timezone
 from django.utils.crypto import get_random_string
@@ -27,6 +27,15 @@ class GeneralSettings(models.Model):
         setting, _ = cls.objects.get_or_create(key=key, defaults={"value": str(default)})
         return setting.value
 
+    @classmethod
+    def discount_for(cls, subtotal):
+        """Discount amount for `subtotal`, from the 'discount_percentage' setting (clamped to 0-100)."""
+        try:
+            pct = Decimal(cls.get_value("discount_percentage", 0))
+        except InvalidOperation:
+            pct = Decimal(0)
+        pct = min(max(pct, Decimal(0)), Decimal(100))
+        return (subtotal * pct / 100).quantize(Decimal("0.01"))
 
 class Category(models.Model):
     """A top-level category (Art materials, Handmade, Art framing) or a sub-category."""
@@ -284,6 +293,7 @@ class Order(models.Model):
 
     subtotal = models.DecimalField(max_digits=10, decimal_places=2)
     shipping_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    discount_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total = models.DecimalField(max_digits=10, decimal_places=2)
 
     created_at = models.DateTimeField(auto_now_add=True)

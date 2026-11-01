@@ -55,6 +55,9 @@
             {% endfor %}
           </ul>
           <div class="d-flex justify-content-between"><span>Subtotal</span><span>{{ summary.subtotal|inr }}</span></div>
+          {% if summary.discount %}
+          <div class="d-flex justify-content-between text-success"><span>Discount</span><span>- {{ summary.discount|inr }}</span></div>
+          {% endif %}
           <div class="d-flex justify-content-between"><span>Shipping</span><span>{% if summary.shipping %}{{ summary.shipping|inr }}{% else %}Free{% endif %}</span></div>
           <div class="d-flex justify-content-between fw-bold fs-5 mt-2"><span>Total</span><span>{{ summary.total|inr }}</span></div>
         </aside>

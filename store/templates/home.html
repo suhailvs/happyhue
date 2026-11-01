@@ -4,7 +4,23 @@
 {% block content %}
 
 <h1 class="visually-hidden">{{ store_name }} Arts &amp; Crafts</h1>
-
+{% if results is not None %}
+<section class="section" id="results">
+  <div class="container">
+    <div class="sec-head">
+      <div><h2>Results for “{{ q }}”</h2></div>
+      <a class="more" href="{% url 'store:home' %}">Clear search</a>
+    </div>
+    <div class="masonry">
+      {% for p in results %}
+      <div>{% include "partials/product_card.html" with p=p %}</div>
+      {% empty %}
+      <p>No products found. Try a different word.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
 {# Homepage carousel slides are managed in the Django admin. #}
 {% if banners %}
 <section class="banner" aria-label="Featured">

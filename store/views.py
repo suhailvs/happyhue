@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 from .forms import FramingQuoteForm
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from .models import Banner, Category, Product
 from .navigation import get_navigation
 
@@ -22,6 +22,19 @@ SORTS = {
 
 def home(request):
     sections = {c["slug"]: c for c in get_navigation(request)}
+    q = request.GET.get("q", "").strip()
+    results = None
+    if q:
+        results = Product.objects.active().select_related("category").prefetch_related("images")
+        for term in q.split():
+            results = results.filter(
+                Q(name__icontains=term)
+                | Q(brand__icontains=term)
+                | Q(description__icontains=term)
+                | Q(category__name__icontains=term)
+            )
+        results = results[:48]
+    tab_keys = [key for key, _ in Product.HomeTab.choices if key]
     tabs = [
         {"key": key, "label": label, "products": Product.objects.active().filter(home_tab=key)[:4]}
         for key, label in Product.HomeTab.choices
@@ -32,6 +45,9 @@ def home(request):
         "handmade": sections.get("handmade"),
         "framing": sections.get("art-framing"),
         "tabs": tabs,
+        "featured_products": Product.objects.active().filter(home_tab__in=tab_keys)[:12],
+        "q": q,
+        "results": results,
         "quote_sizes": data.QUOTE_SIZES,
         "banners": Banner.objects.filter(is_active=True).select_related("category"),
     }

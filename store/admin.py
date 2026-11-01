@@ -130,12 +130,12 @@ class OrderAdmin(admin.ModelAdmin):
         ("Order", {"fields": ("order_number", "status", "created_at", "paid_at")}),
         ("Customer", {"fields": ("user", "full_name", "email", "phone")}),
         ("Delivery address", {"fields": ("address_line1", "address_line2", "city", "state", "pincode", "notes")}),
-        ("Amounts", {"fields": ("subtotal", "shipping_fee", "total")}),
+        ("Amounts", {"fields": ("subtotal", "discount_amount", "shipping_fee", "total")}),
     )
     # Money and customer details are a record of what happened; staff only move the status along.
     readonly_fields = (
         "order_number", "created_at", "paid_at", "user", "full_name", "email", "phone", "address_line1", "address_line2",
-        "city", "state", "pincode", "notes", "subtotal", "shipping_fee", "total",
+        "city", "state", "pincode", "notes", "subtotal", "discount_amount", "shipping_fee", "total",
     )
 
     def has_add_permission(self, request):
@@ -176,12 +176,13 @@ class OrderAdmin(admin.ModelAdmin):
         response = HttpResponse(content_type="text/csv")
         response["Content-Disposition"] = 'attachment; filename="orders.csv"'
         w = csv.writer(response)
-        w.writerow(["Order", "Date", "Status", "Name", "Email", "Phone", "Address", "City", "State", "PIN", "Items", "Total"])
+        w.writerow(["Order", "Date", "Status", "Name", "Email", "Phone", "Address", "City", "State", "PIN", "Items", "Subtotal", "Discount", "Shipping", "Total"])
         for o in queryset.prefetch_related("items"):
             address = ", ".join(x for x in (o.address_line1, o.address_line2) if x)
             items = "; ".join(f"{i.quantity} x {i.name}" for i in o.items.all())
             w.writerow([o.order_number, o.created_at.strftime("%Y-%m-%d %H:%M"),
-                        o.get_status_display(), o.full_name, o.email, o.phone, address, o.city, o.state, o.pincode, items, o.total])
+                        o.get_status_display(), o.full_name, o.email, o.phone, address, o.city, o.state, o.pincode, items,
+                        o.subtotal, o.discount_amount, o.shipping_fee, o.total])
         return response
 
 
