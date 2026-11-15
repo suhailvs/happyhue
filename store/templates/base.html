@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}{{ store_name }} Art Store: art materials, handmade pieces and custom framing{% endblock %}</title>
   <meta name="description" content="{% block meta_description %}Artist-grade paints and brushes, handmade pieces from local makers, and custom framing. Free shipping across India on orders over {{ free_shipping_threshold|inr }}.{% endblock %}">
+  <link rel="canonical" href="{{ canonical_url }}">
+  <meta name="robots" content="{% block robots_meta %}index, follow{% endblock %}">
+  <meta property="og:site_name" content="{{ store_name }}">
+  <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+  <meta property="og:title" content="{% block og_title %}{{ store_name }} Art Store{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Artist-grade paints and brushes, handmade pieces from local makers, and custom framing.{% endblock %}">
+  <meta property="og:url" content="{{ canonical_url }}">
 
   {# Follow the visitor's system light/dark setting using Bootstrap color modes. Runs before paint to avoid a flash. #}
   <script>

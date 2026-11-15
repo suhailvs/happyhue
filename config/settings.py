@@ -52,6 +52,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 "store.context_processors.storefront",
                 "store.context_processors.asset_version",
+                "store.context_processors.canonical_url",
             ],
         },
     },
@@ -141,3 +142,6 @@ DEFAULT_FROM_EMAIL = "Happyhue <orders@happyhue.in>"
 
 ASSET_VERSION = config("ASSET_VERSION")
 CORS_ALLOW_ALL_ORIGINS = True
+
+# Used for canonical URLs and the XML sitemap. Override in deployment if needed.
+SITE_URL = config("SITE_URL", default="https://happyhue.in").rstrip("/")

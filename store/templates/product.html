@@ -3,8 +3,30 @@
 
 {% block title %}{{ product.name }} | {{ store_name }}{% endblock %}
 {% block meta_description %}{{ product.description|default:product.name|truncatechars:155 }}{% endblock %}
+{% block og_type %}product{% endblock %}
+{% block og_title %}{{ product.name }} | {{ store_name }}{% endblock %}
+{% block og_description %}{{ product.description|default:product.name|truncatechars:155 }}{% endblock %}
 
 {% block content %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "{{ product.name|escapejs }}",
+  "description": "{{ product.description|default:product.name|striptags|escapejs }}",
+  "brand": {"@type": "Brand", "name": "{{ product.brand|escapejs }}"},
+  "category": "{{ product.category.name|escapejs }}",
+  "url": "{{ canonical_url|escapejs }}",
+  "offers": {
+    "@type": "Offer",
+    "priceCurrency": "INR",
+    "price": "{{ product.price }}",
+    "availability": "{% if product.in_stock %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+    "url": "{{ canonical_url|escapejs }}"
+  }{% if gallery %},
+  "image": [{% for image in gallery %}"{{ SITE_URL }}{{ image.image.url|escapejs }}"{% if not forloop.last %}, {% endif %}{% endfor %}]{% endif %}
+}
+</script>
 <section class="section pt-4">
   <div class="container">
     <nav aria-label="Breadcrumb">

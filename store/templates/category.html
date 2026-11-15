@@ -3,6 +3,9 @@
 
 {% block title %}{{ category.name }} | {{ store_name }} Arts &amp; Crafts{% endblock %}
 {% block meta_description %}{{ category.blurb|default:category.name }} Shop {{ category.name|lower }} at {{ store_name }} Arts &amp; Crafts.{% endblock %}
+{% block og_title %}{{ category.name }} | {{ store_name }}{% endblock %}
+{% block og_description %}{{ category.blurb|default:category.name }} Shop {{ category.name|lower }} at {{ store_name }} Arts &amp; Crafts.{% endblock %}
+{% block robots_meta %}{% if request.GET %}noindex, follow{% else %}index, follow{% endif %}{% endblock %}
 
 {% block content %}
 <!-- 
@@ -35,7 +38,7 @@
         <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
       </ol>
     </nav>
-    <h2 class="cat-title">{{ category.name }}</h2>
+    <h1 class="cat-title">{{ category.name }}</h1>
     {% if category.blurb %}<p class="cat-blurb">{{ category.blurb }}</p>{% endif %}
 
     <div class="row g-4 g-xl-5 mt-1">

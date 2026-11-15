@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load store_extras %}
 
+{% block robots_meta %}{% if q %}noindex, follow{% else %}index, follow{% endif %}{% endblock %}
+
 {% block content %}
 
 <h1 class="visually-hidden">{{ store_name }} Arts &amp; Crafts</h1>
